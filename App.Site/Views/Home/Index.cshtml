@@ -1,0 +1,77 @@
+﻿@model App.Site.Models.HomeViewModel
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to App.Site</h1>
+    
+    @if (Model.IsAuthenticated)
+    {
+        <div class="alert alert-success" role="alert">
+            <h4 class="alert-heading">Welcome back, @Model.UserName!</h4>
+            <p>You are logged in as a <strong>@Model.UserType</strong>.</p>
+            <hr>
+            <p class="mb-0">
+                <a asp-controller="User" asp-action="Profile" class="btn btn-primary">View Profile</a>
+            </p>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Profile Management</h5>
+                        <p class="card-text">Update your profile information and manage your account settings.</p>
+                        <a asp-controller="User" asp-action="Profile" class="btn btn-outline-primary">Go to Profile</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Account Actions</h5>
+                        <p class="card-text">Manage your account and perform various actions.</p>
+                        <form asp-controller="Auth" asp-action="Logout" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-outline-danger">Logout</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info" role="alert">
+            <h4 class="alert-heading">Get Started!</h4>
+            <p>Welcome to our application. Please login or register to access all features.</p>
+            <hr>
+            <p class="mb-0">
+                <a asp-controller="Auth" asp-action="Login" class="btn btn-primary me-2">Login</a>
+                <a asp-controller="Auth" asp-action="Register" class="btn btn-success">Register</a>
+            </p>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Login</h5>
+                        <p class="card-text">Already have an account? Sign in to access your profile and features.</p>
+                        <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-primary">Login</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Register</h5>
+                        <p class="card-text">Create a new account to get started with our application.</p>
+                        <a asp-controller="Auth" asp-action="Register" class="btn btn-outline-success">Register</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
