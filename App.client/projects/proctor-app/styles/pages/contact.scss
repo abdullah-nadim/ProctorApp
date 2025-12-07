@@ -1,0 +1,138 @@
+.contact-section {
+  padding: 40px 0;
+  background-color: #ffffff;
+  margin-top: 40px; /* Adjusted for fixed header */
+}
+
+.contact-container {
+  display: flex;
+  align-items: center;
+  min-height: 600px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  gap: 40px;
+}
+
+.contact-image-side {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.contact-image-container {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.contact-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+.contact-content-side {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.contact-form-container {
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.contact-title {
+  font-size: 2.8rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  color: #0b509e;
+  text-transform: uppercase;
+}
+
+.contact-subtitle {
+  font-size: 1.4rem;
+  line-height: 1.6;
+  font-weight: 400;
+  margin-bottom: 30px;
+  color: #555;
+  max-width: 95%;
+  text-align: justify;
+  text-justify: inter-word; /* For better word spacing */
+}
+
+.contact-form .form-control {
+  background-color: #eff1f4;
+  padding: 12px 15px;
+  font-size: 1.2rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border: none;
+  border-radius: 10px;
+}
+
+.contact-form .form-control:focus {
+  border-color: #0b509e;
+  box-shadow: 0 0 0 0.25rem rgba(11, 80, 158, 0.25);
+}
+
+.submit-btn {
+  background-color: #0b509e;
+  color: #ffffff;
+  border: none;
+  padding: 12px 30px;
+  font-size: 1.6rem;
+  font-weight: 600;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.submit-btn:hover {
+  background-color: #0d5bb8;
+  transform: translateY(-2px);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+  .contact-section {
+    padding: 60px 0;
+    margin-top: 100px;
+  }
+  
+  .contact-container {
+    flex-direction: column;
+    gap: 30px;
+    min-height: auto;
+  }
+  
+  .contact-image-side {
+    order: 1;
+  }
+  
+  .contact-content-side {
+    order: 2;
+  }
+  
+  .contact-form-container {
+    padding: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-title {
+    font-size: 2rem;
+  }
+  
+  .contact-subtitle {
+    font-size: 1rem;
+  }
+}

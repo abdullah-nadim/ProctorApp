@@ -1,0 +1,469 @@
+:root {
+    --primary-blue: #0b509e;
+    --sidebar-bg: #000000;
+    --sidebar-active: #00aaff;
+    --form-bg: #f4f4f4;
+    --button-purple: #a48bff;
+    --button-purple-dark: #8c75e6;
+    --text-dark: #2d2d2d;
+    --text-light: #b3b3b3;
+    --required-red: #ff0000;
+    --status-green: #4bb543;
+    --status-red: #dc3545;
+    --status-blue: #007bff;
+    --status-gray: #6c757d;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* Fixed Top Bar Only */
+.fixed-top-bar {
+    height: 40px;
+    background-color: var(--primary-blue);
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1030;
+}
+
+/* Dashboard Layout */
+.dashboard-container {
+    display: flex;
+    margin-top: 40px; /* Only the fixed top bar height */
+    min-height: calc(100vh - 40px);
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    background-color: var(--sidebar-bg);
+    color: white;
+    padding: 20px 0;
+    position: fixed;
+    height: calc(100vh - 40px);
+    overflow-y: auto;
+    transition: all 0.3s;
+}
+
+.sidebar-logo {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid #333;
+    margin-bottom: 20px;
+}
+
+.sidebar-logo img {
+    height: 50px;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    margin-bottom: 5px;
+}
+
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.sidebar-menu a:hover, .sidebar-menu a.active {
+    background-color: #333;
+}
+
+.sidebar-menu a.active {
+    background-color: var(--sidebar-active);
+}
+
+.sidebar-menu i {
+    margin-right: 10px;
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+}
+
+.sidebar-divider {
+    height: 1px;
+    background-color: #333;
+    margin: 15px 0;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    margin-left: 260px;
+    padding: 20px;
+    transition: margin-left 0.3s;
+}
+
+/* Dashboard Header - Same as File Complaint Page */
+.dashboard-header {
+    background: linear-gradient(to right, #0078d7, var(--primary-blue));
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+}
+
+.search-container {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+}
+
+.search-bar {
+    position: relative;
+    max-width: 400px;
+    width: 100%;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 10px 15px 10px 40px;
+    border-radius: 20px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.search-bar input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.search-bar i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+}
+
+.user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    color: var(--primary-blue);
+    font-weight: bold;
+}
+
+.user-info h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0;
+    color: white;
+}
+
+.user-info p {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+    opacity: 0.8;
+    color: white;
+}
+
+/* Manage Cases Content */
+.manage-cases-container {
+    background-color: white;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 8px 20px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    background-color: white;
+    color: var(--text-dark);
+    font-weight: 700;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.filter-btn.active {
+    background-color: var(--status-green);
+    color: white;
+    border-color: var(--status-green);
+}
+
+.filter-btn:hover:not(.active) {
+    background-color: #f8f9fa;
+}
+
+/* Cases Table */
+.cases-table-container {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    overflow-x: auto;
+}
+
+.cases-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+.cases-table thead {
+    background: linear-gradient(to right, #0078d7, var(--primary-blue));
+    color: white;
+}
+
+.cases-table th {
+    padding: 15px 20px;
+    text-align: left;
+    font-weight: 1000;
+}
+
+.cases-table td {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.case-id {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.case-subject {
+    color: var(--status-red);
+    font-weight: 500;
+}
+
+.case-date {
+    color: var(--text-dark);
+}
+
+.status-btn {
+    background-color: var(--text-dark);
+    color: white;
+    border: none;
+    padding: 6px 15px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.status-btn:hover {
+    background-color: #1a1a1a;
+}
+
+/* Responsive Styles */
+@media (max-width: 1200px) {
+    .main-content {
+        padding: 15px;
+    }
+    
+    .manage-cases-container {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 992px) {
+    .sidebar {
+        width: 70px;
+        overflow: visible;
+    }
+    
+    .sidebar-logo span, .sidebar-menu span {
+        display: none;
+    }
+    
+    .sidebar-menu i {
+        margin-right: 0;
+        font-size: 20px;
+    }
+    
+    .main-content {
+        margin-left: 70px;
+    }
+    
+    .dashboard-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .search-container {
+        width: 100%;
+    }
+    
+    .user-profile {
+        justify-content: center;
+    }
+    
+    .page-title {
+        font-size: 1.6rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .manage-cases-container {
+        padding: 15px;
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+    
+    .filter-buttons {
+        justify-content: center;
+    }
+    
+    .cases-table th,
+    .cases-table td {
+        padding: 12px 15px;
+    }
+    
+    .cases-table-container {
+        border-radius: 8px;
+    }
+}
+
+@media (max-width: 576px) {
+    .sidebar {
+        width: 0;
+        padding: 0;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        padding: 15px;
+    }
+    
+    .sidebar.active {
+        width: 260px;
+        padding: 20px 0;
+        z-index: 1001;
+    }
+    
+    .menu-toggle {
+        display: block;
+        position: fixed;
+        top: 50px;
+        left: 20px;
+        z-index: 1000;
+        background-color: var(--primary-blue);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 8px 12px;
+        font-size: 18px;
+    }
+    
+    .dashboard-header {
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .search-bar {
+        max-width: 100%;
+    }
+    
+    .user-profile {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .user-avatar {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    
+    .filter-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .filter-btn {
+        width: 100%;
+        max-width: 200px;
+        text-align: center;
+    }
+    
+    .cases-table {
+        min-width: 500px;
+    }
+    
+    .cases-table th,
+    .cases-table td {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+    }
+    
+    .status-btn {
+        padding: 5px 12px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Menu Toggle for Mobile */
+.menu-toggle {
+    display: none;
+}
+
+/* Print Styles */
+@media print {
+    .sidebar, .menu-toggle, .search-bar, .filter-buttons, .status-btn {
+        display: none !important;
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .dashboard-header {
+        background: white !important;
+        color: black !important;
+        border: 1px solid #ddd;
+    }
+    
+    .user-info h3, .user-info p {
+        color: black !important;
+    }
+    
+    .manage-cases-container {
+        box-shadow: none !important;
+        border: 1px solid #ddd;
+    }
+}

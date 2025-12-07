@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications | DIU</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="notifications.css">
+</head>
+<body>
+    <!-- Fixed Top Bar Only -->
+    <div class="fixed-top-bar"></div>
+
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <img src="images/DIU Logo.png" alt="DIU Logo">
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li><a href="proctor-dashboard.html"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                <li><a href="assigned-cases.html"><i class="fas fa-file-alt"></i> <span>Assign Cases</span></a></li>
+                <li><a href="meeting-schedule.html"><i class="fas fa-list"></i> <span>Meeting Schedule</span></a></li>
+                <li><a href="notifications.html" class="active"><i class="fas fa-bell"></i> <span>Notifications</span></a></li>
+                
+                <li class="sidebar-divider"></li>
+                
+                <li><a href="#"><i class="fas fa-user"></i> <span>My Profile</span></a></li>
+                <li><a href="#"><i class="fas fa-question-circle"></i> <span>Help & Support</span></a></li>
+                <li><a href="#"><i class="fas fa-sign-out-alt"></i> <span>Sign Out</span></a></li>
+            </ul>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header with Search and User Profile -->
+            <div class="dashboard-header d-flex justify-content-between align-items-center flex-wrap">
+                <div class="search-container">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search here">
+                    </div>
+                </div>
+                
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <span>DS</span>
+                    </div>
+                    <div class="user-info">
+                        <h3>Dr. Smith Chowdhury</h3>
+                        <p>Proctor</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Notifications Section -->
+            <div class="notifications-section">
+                <div class="notifications-container">
+                    <h1 class="notifications-title">Notifications</h1>
+                    
+                    <div class="notifications-list">
+                        <!-- Notification Card 1 -->
+                        <div class="notification-card">
+                            <div class="notification-dot"></div>
+                            <div class="notification-content">
+                                <div class="notification-header">
+                                    <p class="notification-message">Your complaint has been submitted.</p>
+                                    <span class="notification-time">5 minutes ago</span>
+                                </div>
+                                <p class="notification-case">Case Id: #C0000004</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Notification Card 2 -->
+                        <div class="notification-card">
+                            <div class="notification-dot"></div>
+                            <div class="notification-content">
+                                <div class="notification-header">
+                                    <p class="notification-message">Your case status has been updated to "In Progress".</p>
+                                    <span class="notification-time">2 hours ago</span>
+                                </div>
+                                <p class="notification-case">Case Id: #C0000003</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Notification Card 3 -->
+                        <div class="notification-card">
+                            <div class="notification-dot"></div>
+                            <div class="notification-content">
+                                <div class="notification-header">
+                                    <p class="notification-message">New evidence has been requested for your case.</p>
+                                    <span class="notification-time">1 day ago</span>
+                                </div>
+                                <p class="notification-case">Case Id: #C0000002</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Notification Card 4 -->
+                        <div class="notification-card">
+                            <div class="notification-dot"></div>
+                            <div class="notification-content">
+                                <div class="notification-header">
+                                    <p class="notification-message">Your case has been resolved successfully.</p>
+                                    <span class="notification-time">3 days ago</span>
+                                </div>
+                                <p class="notification-case">Case Id: #C0000001</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Notification Card 5 -->
+                        <div class="notification-card">
+                            <div class="notification-dot"></div>
+                            <div class="notification-content">
+                                <div class="notification-header">
+                                    <p class="notification-message">A meeting has been scheduled to discuss your complaint.</p>
+                                    <span class="notification-time">1 week ago</span>
+                                </div>
+                                <p class="notification-case">Case Id: #C0000005</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Toggle sidebar on mobile
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

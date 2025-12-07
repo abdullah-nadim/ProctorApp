@@ -1,0 +1,90 @@
+.help-support-section {
+  background-color: white;
+  border-radius: 10px;
+  padding: 40px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.help-support-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.contact-info {
+  .contact-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: var(--primary-blue);
+  }
+
+  .contact-description {
+    font-size: 1rem;
+    color: #6c757d;
+    margin-bottom: 30px;
+    line-height: 1.6;
+  }
+}
+
+.contact-details {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.contact-icon {
+  width: 40px;
+  height: 40px;
+  background-color: var(--primary-blue);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  i {
+    font-size: 18px;
+  }
+}
+
+.contact-text {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+
+  span {
+    font-size: 1rem;
+    color: #333;
+    line-height: 1.5;
+  }
+}
+
+.contact-illustration {
+  text-align: center;
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .help-support-section {
+    padding: 20px;
+  }
+
+  .contact-info {
+    .contact-title {
+      font-size: 1.5rem;
+    }
+  }
+}
+

@@ -1,0 +1,159 @@
+/* General Styles */
+body {
+  font-family: 'Open Sans', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Fixed Top Bar */
+.fixed-top-bar {
+  height: 40px;
+  background-color: #0b509e;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1030;
+}
+
+/* Navigation Bar */
+.navigation-bar {
+  background-color: white;
+  padding: 15px 40px;
+  margin-top: 40px; /* Same as fixed-top-bar height */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 10px;
+  z-index: 1020;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 60px;
+  width: auto;
+}
+
+.navbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin: 0;
+  padding: 0;
+  height: 60px; /* Fixed height to ensure alignment */
+}
+
+.nav-link {
+  padding: 8px 16px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  font-size: 20px;
+  white-space: nowrap;
+  min-width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px; /* Fixed height for all nav links */
+}
+
+/* Button Styles */
+.home-btn, .contact-btn, .about-btn {
+  color: #000000;
+  background: transparent;
+}
+
+.about-btn {
+  min-width: 80px;
+  text-align: center;
+}
+
+.home-btn:hover, .contact-btn:hover, .about-btn:hover,
+.home-btn.active, .contact-btn.active, .about-btn.active {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.login-btn {
+  color: #0b509e;
+  min-width: 100px;
+  padding: 8px 20px;
+  text-align: center;
+  background-color: rgba(11, 80, 158, 0.15);
+  border: 1px solid #0b509e;
+  border-radius: 25px;
+  font-weight: 600;
+  height: 40px; /* Same height as other nav links */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+}
+
+.login-btn:hover, .login-btn.active {
+  background-color: rgba(11, 80, 158, 0.25);
+  color: #0b509e;
+}
+
+.main-content {
+  min-height: calc(100vh - 120px);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+  .navigation-bar {
+    flex-direction: column;
+    padding: 10px 20px;
+  }
+  
+  .navbar-nav {
+    gap: 25px;
+    margin-top: 10px;
+  }
+  
+  .nav-link {
+    font-size: 16px;
+    padding: 6px 12px;
+  }
+  
+  .about-btn {
+    min-width: 70px;
+  }
+  
+  .login-btn {
+    min-width: 80px;
+    padding: 6px 16px;
+    font-size: 14px;
+    height: 36px; /* Slightly smaller for tablet */
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+  }
+  
+  .nav-link {
+    font-size: 14px;
+    padding: 6px 12px;
+  }
+  
+  .about-btn {
+    min-width: 60px;
+  }
+  
+  .login-btn {
+    min-width: 70px;
+    padding: 5px 12px;
+    font-size: 12px;
+    height: 32px; /* Smaller for mobile */
+  }
+}

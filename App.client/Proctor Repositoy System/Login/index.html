@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | DIU</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts - Open Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Fixed Top Bar -->
+    <div class="fixed-top-bar"></div>
+    
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navigation-bar">
+        <div class="container-fluid">
+            <!-- Logo on the left -->
+            <a class="navbar-brand" href="#">
+                <img src="images/DIU Logo.png" alt="DIU Logo" class="logo">
+            </a>
+            
+            <!-- Navigation buttons on the right -->
+            <div class="navbar-nav ms-auto">
+                <a href="#" class="nav-link home-btn">Home</a>
+                <a href="#" class="nav-link contact-btn">Contact</a>
+                <a href="#" class="nav-link about-btn">About Us</a>
+                <a href="#" class="nav-link login-btn">Login</a>
+                <a href="#" class="nav-link signup-btn">Sign Up</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 🔄 Login/Signup Area -->
+<div class="main-wrapper">
+  <div class="container-box" id="container">
+    <div class="form-container login-form">
+      <form id="login-form">
+        <h2>Sign In</h2>
+        <input type="email" placeholder="Email" required />
+        <input type="password" placeholder="Password" required />
+        <button type="submit">Login</button>
+      </form>
+    </div>
+
+    <div class="form-container signup-form">
+      <form id="signup-form">
+        <h2>Create Account</h2>
+        <input type="text" placeholder="Name" required />
+        <input type="email" placeholder="Email" required />
+        <input type="password" placeholder="Password" required />
+        <input type="password" placeholder="Confirm Password" required />
+        <button type="submit">Sign Up</button>
+      </form>
+    </div>
+
+    <div class="overlay-container">
+      <h1 id="overlay-title">Welcome Back!</h1>
+      <p id="overlay-text">To keep connected with us please login with your personal info</p>
+      <button id="toggle-btn">Sign Up</button>
+    </div>
+  </div>
+</div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Toggle Script -->
+<script>
+  const container = document.getElementById('container');
+  const toggleBtn = document.getElementById('toggle-btn');
+  const overlayTitle = document.getElementById('overlay-title');
+  const overlayText = document.getElementById('overlay-text');
+
+  toggleBtn.addEventListener('click', () => {
+    container.classList.toggle('signup-mode');
+    if (container.classList.contains('signup-mode')) {
+      overlayTitle.textContent = 'Hello!';
+      overlayText.textContent = 'Enter your personal details and start your journey with us';
+      toggleBtn.textContent = 'Sign In';
+    } else {
+      overlayTitle.textContent = 'Welcome Back!';
+      overlayText.textContent = 'To keep connected with us please login with your personal info';
+      toggleBtn.textContent = 'Sign Up';
+    }
+  });
+</script>
+
+</body>
+</html>

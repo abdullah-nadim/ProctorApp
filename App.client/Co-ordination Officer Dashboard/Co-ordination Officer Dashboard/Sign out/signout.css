@@ -1,0 +1,395 @@
+:root {
+    --primary-blue: #0b509e;
+    --sidebar-bg: #000000;
+    --sidebar-active: #00aaff;
+    --button-blue: #007BFF;
+    --button-blue-dark: #0066cc;
+    --button-gray: #6c757d;
+    --button-gray-dark: #5a6268;
+    --text-dark: #222222;
+    --text-grey: #777777;
+    --card-border: #E0E0E0;
+    --card-bg: #FFFFFF;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* Fixed Top Bar Only */
+.fixed-top-bar {
+    height: 40px;
+    background-color: var(--primary-blue);
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1030;
+}
+
+/* Dashboard Layout */
+.dashboard-container {
+    display: flex;
+    margin-top: 40px; /* Only the fixed top bar height */
+    min-height: calc(100vh - 40px);
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    background-color: var(--sidebar-bg);
+    color: white;
+    padding: 20px 0;
+    position: fixed;
+    height: calc(100vh - 40px);
+    overflow-y: auto;
+    transition: all 0.3s;
+}
+
+.sidebar-logo {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid #333;
+    margin-bottom: 20px;
+}
+
+.sidebar-logo img {
+    height: 50px;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    margin-bottom: 5px;
+}
+
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.sidebar-menu a:hover, .sidebar-menu a.active {
+    background-color: #333;
+}
+
+.sidebar-menu a.active {
+    background-color: var(--sidebar-active);
+}
+
+.sidebar-menu i {
+    margin-right: 10px;
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+}
+
+.sidebar-divider {
+    height: 1px;
+    background-color: #333;
+    margin: 15px 0;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    margin-left: 260px;
+    padding: 20px;
+}
+
+/* Dashboard Header - Same as Dashboard Page */
+.dashboard-header {
+    background: linear-gradient(to right, #0078d7, var(--primary-blue));
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-container {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+}
+
+.search-bar {
+    position: relative;
+    max-width: 400px;
+    width: 100%;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 10px 15px 10px 40px;
+    border-radius: 20px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.search-bar input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.search-bar i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+}
+
+.user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    color: var(--primary-blue);
+    font-weight: bold;
+}
+
+.user-info h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0;
+    color: white;
+}
+
+.user-info p {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+    opacity: 0.8;
+    color: white;
+}
+
+/* Sign Out Section */
+.signout-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 200px);
+}
+
+.signout-dialog {
+    background-color: white;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--card-border);
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+/* Sign Out Icon */
+.signout-icon {
+    margin-bottom: 25px;
+}
+
+.icon-container {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: var(--button-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.icon-container i {
+    color: white;
+    font-size: 2.5rem;
+}
+
+/* Sign Out Text */
+.signout-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 15px;
+}
+
+.signout-subtext {
+    font-size: 1.1rem;
+    color: var(--text-grey);
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+/* Action Buttons */
+.signout-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.btn-yes, .btn-cancel {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    min-width: 100px;
+}
+
+.btn-yes {
+    background-color: var(--button-blue);
+    color: white;
+}
+
+.btn-yes:hover {
+    background-color: var(--button-blue-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-cancel {
+    background-color: var(--button-gray);
+    color: white;
+}
+
+.btn-cancel:hover {
+    background-color: var(--button-gray-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+    .sidebar {
+        width: 70px;
+        overflow: visible;
+    }
+    
+    .sidebar-logo span, .sidebar-menu span {
+        display: none;
+    }
+    
+    .sidebar-menu i {
+        margin-right: 0;
+        font-size: 20px;
+    }
+    
+    .main-content {
+        margin-left: 70px;
+    }
+    
+    .dashboard-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .search-container {
+        width: 100%;
+    }
+    
+    .user-profile {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .signout-dialog {
+        padding: 30px;
+    }
+    
+    .signout-title {
+        font-size: 1.5rem;
+    }
+    
+    .signout-subtext {
+        font-size: 1rem;
+    }
+    
+    .icon-container {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .icon-container i {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .sidebar {
+        width: 0;
+        padding: 0;
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .sidebar.active {
+        width: 260px;
+        padding: 20px 0;
+    }
+    
+    .menu-toggle {
+        display: block;
+        position: fixed;
+        top: 50px;
+        left: 20px;
+        z-index: 1000;
+        background-color: var(--primary-blue);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 8px 12px;
+        font-size: 18px;
+    }
+    
+    .signout-dialog {
+        padding: 25px;
+        margin: 0 15px;
+    }
+    
+    .signout-title {
+        font-size: 1.3rem;
+    }
+    
+    .signout-subtext {
+        font-size: 0.95rem;
+    }
+    
+    .signout-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn-yes, .btn-cancel {
+        width: 100%;
+    }
+}
+
+/* Menu Toggle for Mobile */
+.menu-toggle {
+    display: none;
+}

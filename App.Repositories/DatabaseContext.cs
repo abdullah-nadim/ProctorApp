@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace App.Repositories
 {
-    public class DatabaseContext : IdentityUserContext<User, long>
+    public class DatabaseContext : IdentityUserContext<User, int>
     {
         public DatabaseContext(DbContextOptions options) : base(options)
         {

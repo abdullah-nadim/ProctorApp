@@ -1,0 +1,390 @@
+:root {
+    --primary-blue: #0b509e;
+    --sidebar-bg: #000000;
+    --sidebar-active: #00aaff;
+    --notification-dot: #007BFF;
+    --text-dark: #000000;
+    --text-grey: #777777;
+    --text-light-grey: #999999;
+    --card-border: #E0E0E0;
+    --card-bg: #FFFFFF;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* Fixed Top Bar Only */
+.fixed-top-bar {
+    height: 40px;
+    background-color: var(--primary-blue);
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1030;
+}
+
+/* Dashboard Layout */
+.dashboard-container {
+    display: flex;
+    margin-top: 40px; /* Only the fixed top bar height */
+    min-height: calc(100vh - 40px);
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    background-color: var(--sidebar-bg);
+    color: white;
+    padding: 20px 0;
+    position: fixed;
+    height: calc(100vh - 40px);
+    overflow-y: auto;
+    transition: all 0.3s;
+}
+
+.sidebar-logo {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid #333;
+    margin-bottom: 20px;
+}
+
+.sidebar-logo img {
+    height: 50px;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-weight: bold;
+}
+
+.sidebar-menu li {
+    margin-bottom: 5px;
+}
+
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.sidebar-menu a:hover, .sidebar-menu a.active {
+    background-color: #333;
+}
+
+.sidebar-menu a.active {
+    background-color: var(--sidebar-active);
+}
+
+.sidebar-menu i {
+    margin-right: 10px;
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+}
+
+.sidebar-divider {
+    height: 1px;
+    background-color: #333;
+    margin: 15px 0;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    margin-left: 260px;
+    padding: 20px;
+}
+
+/* Dashboard Header - Same as Dashboard Page */
+.dashboard-header {
+    background: linear-gradient(to right, #0078d7, var(--primary-blue));
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-container {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+}
+
+.search-bar {
+    position: relative;
+    max-width: 400px;
+    width: 100%;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 10px 15px 10px 40px;
+    border-radius: 20px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.search-bar input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.search-bar i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+}
+
+.user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    color: var(--primary-blue);
+    font-weight: bold;
+}
+
+.user-info h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0;
+    color: white;
+}
+
+.user-info p {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+    opacity: 0.8;
+    color: white;
+}
+
+/* Notifications Section */
+.notifications-section {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: calc(100vh - 200px);
+}
+
+.notifications-container {
+    background-color: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--card-border);
+    width: 100%;
+    max-width: 800px;
+}
+
+.notifications-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 25px;
+}
+
+/* Notifications List */
+.notifications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.notification-card {
+    display: flex;
+    align-items: flex-start;
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    padding: 15px;
+    border: 1px solid var(--card-border);
+    transition: all 0.3s;
+}
+
+.notification-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+.notification-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--notification-dot);
+    margin-right: 15px;
+    margin-top: 8px;
+    flex-shrink: 0;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 5px;
+}
+
+.notification-message {
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 1rem;
+    margin: 0;
+    flex: 1;
+}
+
+.notification-time {
+    color: var(--text-grey);
+    font-size: 0.85rem;
+    margin-left: 15px;
+    white-space: nowrap;
+}
+
+.notification-case {
+    color: var(--text-light-grey);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+    .sidebar {
+        width: 70px;
+        overflow: visible;
+    }
+    
+    .sidebar-logo span, .sidebar-menu span {
+        display: none;
+    }
+    
+    .sidebar-menu i {
+        margin-right: 0;
+        font-size: 20px;
+    }
+    
+    .main-content {
+        margin-left: 70px;
+    }
+    
+    .dashboard-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .search-container {
+        width: 100%;
+    }
+    
+    .user-profile {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .notifications-container {
+        padding: 20px;
+    }
+    
+    .notifications-title {
+        font-size: 1.5rem;
+    }
+    
+    .notification-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .notification-time {
+        margin-left: 0;
+        margin-top: 5px;
+    }
+}
+
+@media (max-width: 576px) {
+    .sidebar {
+        width: 0;
+        padding: 0;
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .sidebar.active {
+        width: 260px;
+        padding: 20px 0;
+    }
+    
+    .menu-toggle {
+        display: block;
+        position: fixed;
+        top: 50px;
+        left: 20px;
+        z-index: 1000;
+        background-color: var(--primary-blue);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 8px 12px;
+        font-size: 18px;
+    }
+    
+    .notifications-container {
+        padding: 15px;
+    }
+    
+    .notifications-title {
+        font-size: 1.3rem;
+    }
+    
+    .notification-card {
+        padding: 12px;
+    }
+    
+    .notification-dot {
+        width: 8px;
+        height: 8px;
+        margin-right: 12px;
+        margin-top: 6px;
+    }
+    
+    .notification-message {
+        font-size: 0.95rem;
+    }
+    
+    .notification-time, .notification-case {
+        font-size: 0.8rem;
+    }
+}
+
+/* Menu Toggle for Mobile */
+.menu-toggle {
+    display: none;
+}

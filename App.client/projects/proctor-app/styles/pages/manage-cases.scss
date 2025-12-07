@@ -1,0 +1,30 @@
+@import './my-complaints.scss';
+
+.manage-cases-section {
+  background-color: white;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.manage-cases-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.status-btn {
+  background-color: var(--primary-blue);
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+  display: inline-block;
+
+  &:hover {
+    background-color: #0a4280;
+  }
+}
+
