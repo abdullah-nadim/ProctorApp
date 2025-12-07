@@ -77,11 +77,11 @@ namespace App.Site.Controllers
                     return RedirectToAction("Login", "Auth");
                 }
 
-                // Update user properties
-                existingUser.UserName = model.UserName;
+                // Update user properties - Email and UserName are from IdentityUser and are settable
                 existingUser.Email = model.Email;
+                existingUser.UserName = model.UserName;
 
-                _userServices.Update(existingUser);
+                await _userServices.UpdateUser(existingUser);
 
                 TempData["SuccessMessage"] = "Profile updated successfully!";
                 return RedirectToAction("Profile");

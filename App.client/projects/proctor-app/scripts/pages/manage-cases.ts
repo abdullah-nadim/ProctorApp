@@ -2,6 +2,9 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { ComplaintService } from '../services/complaint.service';
+import { Complaint } from '../models/complaint';
+import { ComplaintStatus } from '../models/user';
 
 interface Case {
   id: string;
@@ -88,20 +91,63 @@ interface Case {
 export class ManageCasesPage implements OnInit {
   cases = signal<Case[]>([]);
   filterStatus: 'all' | 'pending' | 'progress' | 'solved' = 'all';
+  isLoading = signal(false);
+
+  constructor(private complaintService: ComplaintService) {}
 
   ngOnInit(): void {
     this.loadCases();
   }
 
   loadCases(): void {
-    // Mock data - replace with actual API call
-    const mockCases: Case[] = [
-      { id: '#C0000004', subject: 'Drugs', date: 'Today', status: 'pending' },
-      { id: '#C0000003', subject: 'Conflict', date: '30-04-25', status: 'progress' },
-      { id: '#C0000002', subject: 'Cyber Bullying', date: '27-04-25', status: 'solved' },
-      { id: '#C0000001', subject: 'Ragging', date: '02-02-25', status: 'solved' }
-    ];
-    this.cases.set(mockCases);
+    this.isLoading.set(true);
+    
+    this.complaintService.getAllComplaints().subscribe({
+      next: (complaints: Complaint[]) => {
+        this.cases.set(this.mapComplaintsToCases(complaints));
+        this.isLoading.set(false);
+      },
+      error: (error) => {
+        console.error('Error loading complaints:', error);
+        this.cases.set([]);
+        this.isLoading.set(false);
+      }
+    });
+  }
+
+  mapComplaintsToCases(complaints: Complaint[]): Case[] {
+    return complaints.map(complaint => ({
+      id: `#C${String(complaint.id).padStart(8, '0')}`,
+      subject: complaint.title,
+      date: this.formatDate(complaint.complaintDate),
+      status: this.mapStatus(complaint.status)
+    }));
+  }
+
+  mapStatus(status: string): 'pending' | 'progress' | 'solved' {
+    switch (status) {
+      case ComplaintStatus.Pending:
+        return 'pending';
+      case ComplaintStatus.UnderInvestigation:
+        return 'progress';
+      case ComplaintStatus.Resolved:
+      case ComplaintStatus.Dismissed:
+        return 'solved';
+      default:
+        return 'pending';
+    }
+  }
+
+  formatDate(dateString: string): string {
+    if (!dateString) return 'Unknown';
+    const date = new Date(dateString);
+    const today = new Date();
+    
+    if (date.toDateString() === today.toDateString()) {
+      return 'Today';
+    } else {
+      return date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' });
+    }
   }
 
   filteredCases(): Case[] {

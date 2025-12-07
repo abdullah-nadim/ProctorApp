@@ -1,7 +1,13 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ComplaintService } from '../services/complaint.service';
+import { ComplaintCategoryService } from '../services/complaint-category.service';
+import { Complaint } from '../models/complaint';
+import { ComplaintCategory } from '../models/complaint-category';
+import { Priority } from '../models/user';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'file-complaint-page',
@@ -18,16 +24,10 @@ import { Router } from '@angular/router';
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
-                <label for="subject">Select Subject <span class="required">*</span></label>
-                <select class="form-control" id="subject" [(ngModel)]="formData.subject" name="subject" required>
-                  <option value="" disabled selected>Select a subject</option>
-                  <option value="conflict">Conflict</option>
-                  <option value="ragging">Ragging</option>
-                  <option value="bullying">Bullying</option>
-                  <option value="drugs">Drugs</option>
-                  <option value="cyberbullying">Cyberbullying</option>
-                  <option value="sexual-harassment">Sexual harassment</option>
-                  <option value="others">Others</option>
+                <label for="category">Select Category <span class="required">*</span></label>
+                <select class="form-control" id="category" [(ngModel)]="formData.categoryId" name="categoryId" required>
+                  <option [ngValue]="null" disabled selected>Select a category</option>
+                  <option *ngFor="let category of categories()" [ngValue]="category.id">{{ category.name }}</option>
                 </select>
               </div>
             </div>
@@ -137,6 +137,33 @@ import { Router } from '@angular/router';
             </div>
           </div>
           
+          <!-- Row 6: Location and Incident Date -->
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="location">Location</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="location" 
+                  placeholder="Enter incident location"
+                  [(ngModel)]="formData.location"
+                  name="location">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="incidentDate">Incident Date</label>
+                <input 
+                  type="date" 
+                  class="form-control" 
+                  id="incidentDate" 
+                  [(ngModel)]="formData.incidentDate"
+                  name="incidentDate">
+              </div>
+            </div>
+          </div>
+          
           <!-- Submit Button -->
           <div class="form-submit">
             <button type="submit" class="btn-next" [disabled]="!complaintForm.valid || isLoading()">
@@ -149,30 +176,116 @@ import { Router } from '@angular/router';
   `,
   styleUrls: ['../../styles/pages/file-complaint.scss']
 })
-export class FileComplaintPage {
+export class FileComplaintPage implements OnInit {
   isLoading = signal(false);
+  categories = signal<ComplaintCategory[]>([]);
   formData = {
-    subject: '',
+    categoryId: null as number | null,
     description: '',
     name: '',
     gender: '',
     studentId: '',
     department: '',
     contact: '',
-    advisor: ''
+    advisor: '',
+    location: '',
+    incidentDate: ''
   };
+
+  constructor(
+    private complaintService: ComplaintService,
+    private complaintCategoryService: ComplaintCategoryService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.loadCategories();
+    this.loadUserData();
+  }
+
+  loadCategories(): void {
+    this.complaintCategoryService.getAllComplaintCategories().subscribe({
+      next: (categories: ComplaintCategory[]) => {
+        this.categories.set(categories);
+      },
+      error: (error) => {
+        console.error('Error loading categories:', error);
+      }
+    });
+  }
+
+  loadUserData(): void {
+    const currentUser = UserService.getCurrentUser();
+    if (currentUser) {
+      this.formData.name = currentUser.name || currentUser.fullName;
+      this.formData.studentId = currentUser.userName || '';
+      this.formData.department = currentUser.department || '';
+      this.formData.contact = currentUser.phone || '';
+      this.formData.advisor = currentUser.advisorName || '';
+    }
+  }
 
   onSubmit(): void {
     if (this.isLoading()) return;
     
+    const currentUser = UserService.getCurrentUser();
+    if (!currentUser) {
+      alert('Please log in to file a complaint');
+      return;
+    }
+
+    if (!this.formData.categoryId || !this.formData.description) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
     this.isLoading.set(true);
-    // TODO: Implement API call to submit complaint
-    // For now, navigate to next step or my-complaints
-    setTimeout(() => {
-      this.isLoading.set(false);
-      // Navigate to next form step or my-complaints page
-      // this.router.navigate(['/dashboard/my-complaints']);
-    }, 1000);
+
+    const complaint: Complaint = {
+      id: 0,
+      title: this.getCategoryName(this.formData.categoryId!) || 'Complaint',
+      description: this.formData.description,
+      complaintDate: new Date().toISOString(),
+      status: 'Pending',
+      priority: Priority.Medium,
+      complainantId: currentUser.id,
+      complainantName: this.formData.name,
+      complainantDetails: `${this.formData.gender}, Student ID: ${this.formData.studentId}`,
+      complainantStudentId: this.formData.studentId,
+      accusedStudentId: null,
+      accusedName: null,
+      accusedDetails: null,
+      categoryId: this.formData.categoryId,
+      location: this.formData.location || '',
+      incidentDate: this.formData.incidentDate || null,
+      createdOn: '',
+      modifiedOn: '',
+      complainant: null,
+      category: null,
+      evidence: [],
+      caseAssignments: [],
+      explanations: [],
+      caseFiles: [],
+      meetings: []
+    };
+
+    this.complaintService.createComplaint(complaint).subscribe({
+      next: () => {
+        this.isLoading.set(false);
+        alert('Complaint submitted successfully!');
+        this.router.navigate(['/dashboard/my-complaints']);
+      },
+      error: (error) => {
+        console.error('Error submitting complaint:', error);
+        this.isLoading.set(false);
+        alert('Failed to submit complaint. Please try again.');
+      }
+    });
+  }
+
+  getCategoryName(categoryId: number): string {
+    const category = this.categories().find(c => c.id === categoryId);
+    return category?.name || '';
   }
 }
 

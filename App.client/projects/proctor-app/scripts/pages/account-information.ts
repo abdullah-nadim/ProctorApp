@@ -2,7 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { UserService } from '../models/user';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'account-information-page',
@@ -68,8 +68,9 @@ export class AccountInformationPage implements OnInit {
   ngOnInit(): void {
     const user = UserService.getCurrentUser();
     if (user) {
-      this.formData.name = user.name;
+      this.formData.name = user.name || user.fullName;
       this.formData.email = user.email;
+      this.formData.phone = user.phone || '';
     }
   }
 

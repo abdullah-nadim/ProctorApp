@@ -2,7 +2,10 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { UserService, UserType } from '../models/user';
+import { UserTypes, ComplaintStatus } from '../models/user';
+import { UserService } from '../services/user.service';
+import { ComplaintService } from '../services/complaint.service';
+import { Complaint } from '../models/complaint';
 
 interface Case {
   id: string;
@@ -101,19 +104,78 @@ export class DashboardPage implements OnInit {
   cases = signal<Case[]>([]);
   sortBy = 'recently';
 
+  constructor(private complaintService: ComplaintService) {}
+
   ngOnInit(): void {
     this.loadCases();
   }
 
   loadCases(): void {
-    // Mock data - replace with actual API call
-    const mockCases: Case[] = [
-      { id: '#C0000004', category: 'Drugs', date: 'Today', status: 'pending' },
-      { id: '#C0000002', category: 'Cyber Bullying', date: '27-04-25', status: 'done' },
-      { id: '#C0000003', category: 'Conflict', date: '30-04-25', status: 'progress' },
-      { id: '#C0000001', category: 'Ragging', date: '02-02-25', status: 'done' }
-    ];
-    this.cases.set(mockCases);
+    const userType = UserService.getUserType();
+    const currentUser = UserService.getCurrentUser();
+    
+    if (userType === UserTypes.Student && currentUser) {
+      // Load student's complaints
+      this.complaintService.getComplaintsByComplainant(currentUser.id).subscribe({
+        next: (complaints: Complaint[]) => {
+          this.cases.set(this.mapComplaintsToCases(complaints));
+        },
+        error: (error) => {
+          console.error('Error loading complaints:', error);
+          this.cases.set([]);
+        }
+      });
+    } else {
+      // Load all complaints for Proctor/CoordinationOfficer
+      this.complaintService.getAllComplaints().subscribe({
+        next: (complaints: Complaint[]) => {
+          this.cases.set(this.mapComplaintsToCases(complaints));
+        },
+        error: (error) => {
+          console.error('Error loading complaints:', error);
+          this.cases.set([]);
+        }
+      });
+    }
+  }
+
+  mapComplaintsToCases(complaints: Complaint[]): Case[] {
+    return complaints.map(complaint => ({
+      id: `#C${String(complaint.id).padStart(8, '0')}`,
+      category: complaint.category?.name || 'Uncategorized',
+      date: this.formatDate(complaint.complaintDate),
+      status: this.mapStatus(complaint.status)
+    }));
+  }
+
+  mapStatus(status: string): 'pending' | 'progress' | 'done' {
+    switch (status) {
+      case ComplaintStatus.Pending:
+        return 'pending';
+      case ComplaintStatus.UnderInvestigation:
+        return 'progress';
+      case ComplaintStatus.Resolved:
+      case ComplaintStatus.Dismissed:
+        return 'done';
+      default:
+        return 'pending';
+    }
+  }
+
+  formatDate(dateString: string): string {
+    if (!dateString) return 'Unknown';
+    const date = new Date(dateString);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    if (date.toDateString() === today.toDateString()) {
+      return 'Today';
+    } else if (date.toDateString() === yesterday.toDateString()) {
+      return 'Yesterday';
+    } else {
+      return date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' });
+    }
   }
 
   getTotalCases(): number {
@@ -134,7 +196,7 @@ export class DashboardPage implements OnInit {
 
   getFirstStatCardClass(): string {
     const userType = UserService.getUserType();
-    if (userType === UserType.Student) {
+    if (userType === UserTypes.Student) {
       return 'cases-filed';
     }
     return 'total-cases';
@@ -142,7 +204,7 @@ export class DashboardPage implements OnInit {
 
   getFirstStatLabel(): string {
     const userType = UserService.getUserType();
-    if (userType === UserType.Student) {
+    if (userType === UserTypes.Student) {
       return 'Cases Filed';
     }
     return 'Total Cases';
@@ -163,9 +225,9 @@ export class DashboardPage implements OnInit {
 
   getAllCasesRoute(): string {
     const userType = UserService.getUserType();
-    if (userType === UserType.Student) {
+    if (userType === UserTypes.Student) {
       return '/dashboard/my-complaints';
-    } else if (userType === UserType.Proctor) {
+    } else if (userType === UserTypes.Proctor) {
       return '/dashboard/assign-cases';
     } else {
       return '/dashboard/manage-cases';
@@ -174,7 +236,7 @@ export class DashboardPage implements OnInit {
 
   getAllCasesText(): string {
     const userType = UserService.getUserType();
-    if (userType === UserType.Student) {
+    if (userType === UserTypes.Student) {
       return 'Show All My Cases';
     }
     return 'Show All Cases';

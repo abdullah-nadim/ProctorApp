@@ -133,7 +133,7 @@ namespace App.Services
             {
                 using (IRepositoryFactory factory = new RepositoryFactory(_Context))
                 {
-                    return await factory.GetUserRepository().ReadManyAsync(pageNumber, pageSize);
+                    return await factory.GetUserRepository().ReadManyPagedAsync(pageNumber, pageSize);
                 }
             }
             catch (Exception ex)
@@ -175,18 +175,25 @@ namespace App.Services
             }
         }
 
-        public void Update(User user)
+        public async Task UpdateUser(User updatedUser)
         {
             try
             {
                 using (IRepositoryFactory factory = new RepositoryFactory(_Context))
                 {
-                    factory.GetUserRepository().Update(user);
+                    IUserRepository repository = factory.GetUserRepository();
+                    User updatingUser = await repository.ReadAsync(updatedUser.Id);
+                    if (updatingUser != null)
+                    {
+                        updatingUser.Update(updatedUser);
+                        repository.Update(updatingUser);
+                        factory.Commit();
+                    }
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error updating user with ID {UserId}", user.Id);
+                _logger.LogError(ex, "Error updating user with ID {UserId}", updatedUser.Id);
                 throw;
             }
         }

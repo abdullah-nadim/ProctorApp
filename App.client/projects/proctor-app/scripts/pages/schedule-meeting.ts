@@ -2,15 +2,11 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-
-interface Meeting {
-  id: string;
-  caseId: string;
-  date: string;
-  time: string;
-  location: string;
-  participants: string[];
-}
+import { MeetingService } from '../services/meeting.service';
+import { ComplaintService } from '../services/complaint.service';
+import { Meeting } from '../models/meeting';
+import { MeetingStatus } from '../models/user';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'schedule-meeting-page',
@@ -31,12 +27,13 @@ interface Meeting {
           <h2>Create New Meeting</h2>
           <form (ngSubmit)="onSubmitMeeting()" #meetingForm="ngForm">
             <div class="form-group">
-              <label>Case ID <span class="required">*</span></label>
+              <label>Complaint ID <span class="required">*</span></label>
               <input 
-                type="text" 
+                type="number" 
                 class="form-control" 
-                [(ngModel)]="meetingFormData.caseId"
-                name="caseId"
+                [(ngModel)]="meetingFormData.complaintId"
+                name="complaintId"
+                placeholder="Enter complaint ID"
                 required>
             </div>
             
@@ -47,8 +44,8 @@ interface Meeting {
                   <input 
                     type="date" 
                     class="form-control" 
-                    [(ngModel)]="meetingFormData.date"
-                    name="date"
+                    [(ngModel)]="meetingFormData.scheduledDate"
+                    name="scheduledDate"
                     required>
                 </div>
               </div>
@@ -58,8 +55,8 @@ interface Meeting {
                   <input 
                     type="time" 
                     class="form-control" 
-                    [(ngModel)]="meetingFormData.time"
-                    name="time"
+                    [(ngModel)]="meetingFormData.scheduledTime"
+                    name="scheduledTime"
                     required>
                 </div>
               </div>
@@ -72,17 +69,28 @@ interface Meeting {
                 class="form-control" 
                 [(ngModel)]="meetingFormData.location"
                 name="location"
+                placeholder="Enter meeting location"
                 required>
             </div>
             
             <div class="form-group">
-              <label>Participants</label>
+              <label>Agenda</label>
               <textarea 
                 class="form-control" 
                 rows="3"
-                [(ngModel)]="meetingFormData.participants"
-                name="participants"
-                placeholder="Enter participant names"></textarea>
+                [(ngModel)]="meetingFormData.agenda"
+                name="agenda"
+                placeholder="Enter meeting agenda"></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label>Notes</label>
+              <textarea 
+                class="form-control" 
+                rows="3"
+                [(ngModel)]="meetingFormData.notes"
+                name="notes"
+                placeholder="Enter additional notes"></textarea>
             </div>
             
             <div class="form-actions">
@@ -109,10 +117,10 @@ interface Meeting {
             </thead>
             <tbody>
               <tr *ngFor="let meeting of meetings()">
-                <td>{{ meeting.id }}</td>
-                <td>{{ meeting.caseId }}</td>
-                <td>{{ meeting.date }}</td>
-                <td>{{ meeting.time }}</td>
+                <td>#M{{ getMeetingId(meeting.id) }}</td>
+                <td>#C{{ getComplaintId(meeting.complaintId) }}</td>
+                <td>{{ formatMeetingDate(meeting.scheduledAt) }}</td>
+                <td>{{ formatMeetingTime(meeting.scheduledAt) }}</td>
                 <td>{{ meeting.location }}</td>
                 <td>
                   <button class="view-btn" [routerLink]="['/dashboard/meeting-details', meeting.id]">
@@ -134,36 +142,108 @@ export class ScheduleMeetingPage implements OnInit {
   isLoading = signal(false);
   
   meetingFormData = {
-    caseId: '',
-    date: '',
-    time: '',
+    complaintId: null as number | null,
+    scheduledDate: '',
+    scheduledTime: '',
     location: '',
-    participants: ''
+    agenda: '',
+    notes: ''
   };
+
+  constructor(
+    private meetingService: MeetingService,
+    private complaintService: ComplaintService
+  ) {}
 
   ngOnInit(): void {
     this.loadMeetings();
   }
 
   loadMeetings(): void {
-    // Mock data - replace with actual API call
-    const mockMeetings: Meeting[] = [
-      { id: 'M001', caseId: '#C0000003', date: '05-05-25', time: '10:00 AM', location: 'Room 101', participants: ['Student', 'Proctor'] },
-      { id: 'M002', caseId: '#C0000002', date: '06-05-25', time: '2:00 PM', location: 'Room 202', participants: ['Student', 'Proctor', 'Officer'] }
-    ];
-    this.meetings.set(mockMeetings);
+    this.isLoading.set(true);
+    
+    this.meetingService.getAllMeetings().subscribe({
+      next: (meetings: Meeting[]) => {
+        this.meetings.set(meetings);
+        this.isLoading.set(false);
+      },
+      error: (error) => {
+        console.error('Error loading meetings:', error);
+        this.meetings.set([]);
+        this.isLoading.set(false);
+      }
+    });
   }
 
   onSubmitMeeting(): void {
     if (this.isLoading()) return;
     
+    if (!this.meetingFormData.complaintId || !this.meetingFormData.scheduledDate || 
+        !this.meetingFormData.scheduledTime || !this.meetingFormData.location) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
     this.isLoading.set(true);
-    // TODO: Implement API call to create meeting
-    setTimeout(() => {
-      this.isLoading.set(false);
-      this.showCreateForm.set(false);
-      this.loadMeetings();
-    }, 1000);
+
+    // Combine date and time into ISO string
+    const dateTime = new Date(`${this.meetingFormData.scheduledDate}T${this.meetingFormData.scheduledTime}`);
+    const currentUser = UserService.getCurrentUser();
+    
+    const meeting = new Meeting();
+    meeting.complaintId = this.meetingFormData.complaintId!;
+    meeting.scheduledBy = currentUser?.id || 0;
+    meeting.scheduledAt = dateTime.toISOString();
+    meeting.location = this.meetingFormData.location;
+    meeting.agenda = this.meetingFormData.agenda || null;
+    meeting.status = MeetingStatus.Scheduled;
+    meeting.durationMinutes = 30; // Default duration
+
+    this.meetingService.createMeeting(meeting).subscribe({
+      next: () => {
+        this.isLoading.set(false);
+        this.showCreateForm.set(false);
+        this.resetForm();
+        this.loadMeetings();
+        alert('Meeting scheduled successfully!');
+      },
+      error: (error) => {
+        console.error('Error creating meeting:', error);
+        this.isLoading.set(false);
+        alert('Failed to schedule meeting. Please try again.');
+      }
+    });
+  }
+
+  resetForm(): void {
+    this.meetingFormData = {
+      complaintId: null,
+      scheduledDate: '',
+      scheduledTime: '',
+      location: '',
+      agenda: '',
+      notes: ''
+    };
+  }
+
+  formatMeetingDate(dateString: string): string {
+    if (!dateString) return 'Unknown';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' });
+  }
+
+  formatMeetingTime(dateString: string): string {
+    if (!dateString) return 'Unknown';
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  getMeetingId(id: number): string {
+    return String(id).padStart(6, '0');
+  }
+
+  getComplaintId(id: number): string {
+    return String(id).padStart(8, '0');
   }
 }
 

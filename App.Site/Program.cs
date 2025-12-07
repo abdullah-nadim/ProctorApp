@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Http;
 
 namespace App.Site
 {
@@ -39,26 +40,41 @@ namespace App.Site
 
             // Register services
             builder.Services.AddScoped<UserServices>();
+            builder.Services.AddScoped<ComplaintServices>();
+            builder.Services.AddScoped<ComplaintCategoryServices>();
+            builder.Services.AddScoped<CaseAssignmentServices>();
+            builder.Services.AddScoped<CaseFileServices>();
+            builder.Services.AddScoped<MeetingServices>();
             builder.Services.AddScoped<IAuthService, AuthServices>();
 
             builder.Services.AddAutoMapper(typeof(App.API.Contracts.AutoMapperProfile));
             builder.Services.AddControllersWithViews();
             builder.Services.AddMemoryCache();
 
-            //builder.Services.AddCors(options =>
-            //{
-            //    options.AddDefaultPolicy(policy =>
-            //    {
-            //        policy.WithOrigins(applicationConfiguration.CorsOrigins)
-            //            .SetIsOriginAllowedToAllowWildcardSubdomains().AllowAnyHeader().AllowAnyMethod().AllowCredentials();
-            //    });
-            //});
+            // Configure CORS - Allow only localhost:4200
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200", "https://localhost:4200")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+            });
 
-            builder.Services.AddIdentity<User, IdentityRole<long>>(options =>
+            builder.Services.AddIdentityCore<User>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequiredLength = 6;
             })
             .AddEntityFrameworkStores<DatabaseContext>()
+            .AddSignInManager<SignInManager<User>>()
+            .AddUserManager<UserManager<User>>()
             .AddDefaultTokenProviders();
 
             builder.Services.AddAuthentication(options =>
@@ -122,13 +138,15 @@ namespace App.Site
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
-            app.UseCors();
+            app.UseCors(); // Must be before UseAuthentication and UseAuthorization
             app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            app.MapControllers();
 
             app.Run();
         }

@@ -1,6 +1,13 @@
 using App.Core.Models;
 using App.Models;
 using App.Repositories.Configurations;
+using App.Repositories.Configurations.AuditLogs;
+using App.Repositories.Configurations.Cases;
+using App.Repositories.Configurations.Complaints;
+using App.Repositories.Configurations.Explanations;
+using App.Repositories.Configurations.Meetings;
+using App.Repositories.Configurations.Notifications;
+using App.Repositories.Configurations.Roles;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,14 +19,38 @@ namespace App.Repositories
         {
         }
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<UserSession> UserSessions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // Users
             modelBuilder.ApplyConfiguration(new UserConfiguration(this));
             modelBuilder.ApplyConfiguration(new UserSessionConfiguration(this));
+            modelBuilder.ApplyConfiguration(new RoleConfiguration(this));
+
+            // Complaints
+            modelBuilder.ApplyConfiguration(new ComplaintConfiguration(this));
+            modelBuilder.ApplyConfiguration(new ComplaintCategoryConfiguration(this));
+            modelBuilder.ApplyConfiguration(new ComplaintEvidenceConfiguration(this));
+
+            // Cases
+            modelBuilder.ApplyConfiguration(new CaseAssignmentConfiguration(this));
+            modelBuilder.ApplyConfiguration(new CaseFileConfiguration(this));
+            modelBuilder.ApplyConfiguration(new CaseFileDocumentConfiguration(this));
+
+            // Explanations
+            modelBuilder.ApplyConfiguration(new ExplanationConfiguration(this));
+
+            // Meetings
+            modelBuilder.ApplyConfiguration(new MeetingConfiguration(this));
+            modelBuilder.ApplyConfiguration(new MeetingParticipantConfiguration(this));
+
+            // Notifications
+            modelBuilder.ApplyConfiguration(new NotificationConfiguration(this));
+
+            // Audit Logs
+            modelBuilder.ApplyConfiguration(new AuditLogConfiguration(this));
         }
 
         public override int SaveChanges()

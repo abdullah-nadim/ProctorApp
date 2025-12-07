@@ -1,17 +1,33 @@
-﻿using App.Models;
-using Microsoft.AspNetCore.Identity;
+﻿using App.API.Contracts.Roles;
+using M = App.Models;
 
 namespace App.API.Contracts
 {
-    public class User : IdentityUser<long>
+    public class User : BaseContract<User, M.User>
     {
         public User()
         {
-            UserType = UserTypes.User;
+            Id = 0;
+            Email = UserName = FullName = string.Empty;
+            Phone = OrganizationId = Department = AdvisorName = null;
+            UserType = "Student";
             IsActive = true;
         }
 
-        public UserTypes UserType { get; set; }
+        public int Id { get; set; }
+        public string Email { get; set; }
+        public string UserName { get; set; }
+        public string FullName { get; set; }
+        public string? OrganizationId { get; set; }
+        public string? Phone { get; set; }
+        public string? Department { get; set; }
+        public string? AdvisorName { get; set; }
+        public int? RoleId { get; set; }
+        public string UserType { get; set; }
         public bool IsActive { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public DateTime ModifiedOn { get; set; }
+
+        public Role? Role { get; set; }
     }
 }

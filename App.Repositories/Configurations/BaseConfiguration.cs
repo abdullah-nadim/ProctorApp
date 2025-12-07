@@ -4,15 +4,24 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace App.Repositories.Configurations
 {
-    public abstract class BaseConfiguration<T> : IEntityTypeConfiguration<T> where T : class
+    abstract class BaseConfiguration<TEntity> where TEntity : class
     {
-        protected BaseConfiguration(DatabaseContext databaseContext) { _DatabaseContext = databaseContext; }
+        protected BaseConfiguration(DatabaseContext context) { _Context = context; }
 
-        protected DatabaseContext _DatabaseContext { get; set; }
-
-        public virtual void Configure(EntityTypeBuilder<T> builder)
+        protected void SetupAuditableConfiguration(EntityTypeBuilder<TEntity> builder)
         {
-            // Common configuration for all entities
+            if (typeof(IAuditableEntity).IsAssignableFrom(typeof(TEntity)))
+            {
+                builder.Property<DateTime>("CreatedOn").IsRequired();
+                builder.Property<DateTime>("ModifiedOn").IsRequired();
+            }
         }
+
+        protected void SetupBaseConfiguration(EntityTypeBuilder<TEntity> builder)
+        {
+            SetupAuditableConfiguration(builder);
+        }
+
+        protected DatabaseContext _Context { get; set; }
     }
 } 

@@ -1,15 +1,14 @@
-using App.Core.Models;
-
 namespace App.Models.Filters
 {
-    public class BaseModelFilter : BaseFilter
+    public abstract class BaseModelFilter
     {
-        public bool? IsActive { get; set; }
-        public DateTime? CreatedFrom { get; set; }
-        public DateTime? CreatedTo { get; set; }
+        protected BaseModelFilter()
+        {
+            AllowPaging = false;
+        }
 
         public bool AllowPaging { get; set; }
-        //public int PageNumber { get; set; }
-        //public int PageSize { get; set; }
+        public int PageNumber { get; set; }
+        public int PageSize { get; set; }
     }
 } 

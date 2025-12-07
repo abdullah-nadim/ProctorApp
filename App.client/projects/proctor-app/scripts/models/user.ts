@@ -1,57 +1,115 @@
-export enum UserType {
-  Student = 'student',
-  Proctor = 'proctor',
-  CoordinationOfficer = 'coordination-officer'
+export enum UserTypes {
+  Admin = 'Admin',
+  Student = 'Student',
+  Proctor = 'Proctor',
+  CoordinationOfficer = 'CoordinationOfficer',
+  AssistantProctor = 'AssistantProctor',
+  User = 'User'
 }
 
-export interface User {
+export enum ComplaintStatus {
+  Pending = 'Pending',
+  UnderInvestigation = 'UnderInvestigation',
+  Resolved = 'Resolved',
+  Dismissed = 'Dismissed'
+}
+
+export enum Priority {
+  Low = 'Low',
+  Medium = 'Medium',
+  High = 'High',
+  Critical = 'Critical'
+}
+
+export enum CaseAssignmentStatus {
+  Pending = 'Pending',
+  InProgress = 'InProgress',
+  Completed = 'Completed'
+}
+
+export enum CaseFileStatus {
+  Draft = 'Draft',
+  Submitted = 'Submitted',
+  Reviewed = 'Reviewed'
+}
+
+export enum MeetingStatus {
+  Scheduled = 'Scheduled',
+  Completed = 'Completed',
+  Canceled = 'Canceled'
+}
+
+export enum MeetingParticipantRole {
+  Complainant = 'Complainant',
+  Accused = 'Accused',
+  Proctor = 'Proctor',
+  Witness = 'Witness',
+  Other = 'Other'
+}
+
+export enum RelatedEntityType {
+  Complaint = 'Complaint',
+  Meeting = 'Meeting',
+  CaseFile = 'CaseFile'
+}
+
+export class User {
+  id: number;
+  email: string;
+  userName: string;
+  fullName: string;
+  get name(): string {
+    return this.fullName;
+  }
+  set name(value: string) {
+    this.fullName = value;
+  }
+  organizationId?: string | null;
+  phone?: string | null;
+  department?: string | null;
+  advisorName?: string | null;
+  roleId?: number | null;
+  userType: string;
+  isActive: boolean;
+  createdOn: string;
+  modifiedOn: string;
+  role?: Role | null;
+
+  constructor() {
+    this.id = 0;
+    this.email = this.userName = this.fullName = '';
+    this.organizationId = this.phone = this.department = this.advisorName = null;
+    this.userType = UserTypes.Student;
+    this.isActive = true;
+    this.createdOn = this.modifiedOn = '';
+    this.role = null;
+  }
+}
+
+export class UserSession {
+  sessionKey: string;
+  userId: number;
+  isActive: boolean;
+  createdOn: string;
+  modifiedOn: string;
+
+  constructor() {
+    this.sessionKey = '';
+    this.userId = 0;
+    this.isActive = true;
+    this.createdOn = this.modifiedOn = '';
+  }
+}
+
+export class Role {
   id: number;
   name: string;
-  email: string;
-  userType: UserType;
-  avatar?: string;
-}
+  createdOn: string;
+  modifiedOn: string;
 
-export class UserService {
-  private static currentUser: User | null = null;
-
-  static setCurrentUser(user: User): void {
-    this.currentUser = user;
-    localStorage.setItem('currentUser', JSON.stringify(user));
-  }
-
-  static getCurrentUser(): User | null {
-    if (this.currentUser) {
-      return this.currentUser;
-    }
-    const stored = localStorage.getItem('currentUser');
-    if (stored) {
-      this.currentUser = JSON.parse(stored);
-      return this.currentUser;
-    }
-    return null;
-  }
-
-  static clearCurrentUser(): void {
-    this.currentUser = null;
-    localStorage.removeItem('currentUser');
-  }
-
-  static getUserType(): UserType | null {
-    const user = this.getCurrentUser();
-    return user ? user.userType : null;
-  }
-
-  static isStudent(): boolean {
-    return this.getUserType() === UserType.Student;
-  }
-
-  static isProctor(): boolean {
-    return this.getUserType() === UserType.Proctor;
-  }
-
-  static isCoordinationOfficer(): boolean {
-    return this.getUserType() === UserType.CoordinationOfficer;
+  constructor() {
+    this.id = 0;
+    this.name = '';
+    this.createdOn = this.modifiedOn = '';
   }
 }
-

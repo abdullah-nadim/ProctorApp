@@ -15,8 +15,8 @@ namespace App.Core.Repositories
         Task<T?> ReadAsync(object key, CancellationToken cancellationToken = default);
         List<T> ReadMany();
         Task<List<T>> ReadManyAsync(CancellationToken cancellationToken = default);
-        PagedEntities<T> ReadMany(int pageNumber = 1, int pageSize = 10);
-        Task<PagedEntities<T>> ReadManyAsync(int pageNumber = 1, int pageSize = 10, CancellationToken cancellationToken = default);
+        PagedEntities<T> ReadMany(int pageNumber, int pageSize);
+        Task<PagedEntities<T>> ReadManyPagedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default);
 
         // Update operations
         void Update(T entity);

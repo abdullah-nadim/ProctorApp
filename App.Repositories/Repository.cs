@@ -59,7 +59,7 @@ namespace App.Repositories
             return await _Collection.ToListAsync(cancellationToken);
         }
 
-        public PagedEntities<TEntity> ReadMany(int pageNumber = 1, int pageSize = 10)
+        public PagedEntities<TEntity> ReadMany(int pageNumber, int pageSize)
         {
             return new PagedEntities<TEntity>()
             {
@@ -70,7 +70,7 @@ namespace App.Repositories
             };
         }
 
-        public virtual async Task<PagedEntities<TEntity>> ReadManyAsync(int pageNumber = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+        public virtual async Task<PagedEntities<TEntity>> ReadManyPagedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default)
         {
             return new PagedEntities<TEntity>()
             {

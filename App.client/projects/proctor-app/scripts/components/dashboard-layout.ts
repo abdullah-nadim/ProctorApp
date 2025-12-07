@@ -2,13 +2,15 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, RouterOutlet, ActivatedRoute, Router } from '@angular/router';
-import { UserService, UserType, User } from '../models/user';
+import { User, UserTypes } from '../models/user';
+import { UserService } from '../services/user.service';
+import { AuthService } from '../services/auth.service';
 
 interface MenuItem {
   label: string;
   icon: string;
   route: string;
-  userTypes: UserType[];
+  userTypes: UserTypes[];
 }
 
 @Component({
@@ -64,43 +66,10 @@ interface MenuItem {
       
       <!-- Main Content -->
       <main class="main-content">
-        <!-- Temporary User Switcher (Development Only) -->
-        <div class="dev-user-switcher" style="background: #f0f0f0; padding: 15px; margin-bottom: 20px; border-radius: 8px; border: 2px solid #007bff;">
-          <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
-            <strong style="color: #007bff;">🔧 DEV MODE - Switch User Type:</strong>
-            <button (click)="switchUser(UserType.Student)" 
-                    [style.background]="getUserType() === UserType.Student ? '#28a745' : '#6c757d'"
-                    style="color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
-              👤 Student
-            </button>
-            <button (click)="switchUser(UserType.Proctor)" 
-                    [style.background]="getUserType() === UserType.Proctor ? '#28a745' : '#6c757d'"
-                    style="color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
-              🎓 Proctor
-            </button>
-            <button (click)="switchUser(UserType.CoordinationOfficer)" 
-                    [style.background]="getUserType() === UserType.CoordinationOfficer ? '#28a745' : '#6c757d'"
-                    style="color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
-              👔 Co-ordination Officer
-            </button>
-            <div style="margin-left: auto; display: flex; gap: 10px; flex-wrap: wrap;">
-              <strong style="color: #007bff;">Quick Nav:</strong>
-              <a routerLink="/dashboard" style="padding: 6px 12px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; font-size: 12px;">Dashboard</a>
-              <a routerLink="/dashboard/file-complaint" style="padding: 6px 12px; background: #17a2b8; color: white; text-decoration: none; border-radius: 4px; font-size: 12px;">File Complaint</a>
-              <a routerLink="/dashboard/my-complaints" style="padding: 6px 12px; background: #17a2b8; color: white; text-decoration: none; border-radius: 4px; font-size: 12px;">My Complaints</a>
-              <a routerLink="/dashboard/assign-cases" style="padding: 6px 12px; background: #ffc107; color: #000; text-decoration: none; border-radius: 4px; font-size: 12px;">Assign Cases</a>
-              <a routerLink="/dashboard/schedule-meeting" style="padding: 6px 12px; background: #ffc107; color: #000; text-decoration: none; border-radius: 4px; font-size: 12px;">Schedule Meeting</a>
-              <a routerLink="/dashboard/manage-cases" style="padding: 6px 12px; background: #dc3545; color: white; text-decoration: none; border-radius: 4px; font-size: 12px;">Manage Cases</a>
-              <a routerLink="/dashboard/notifications" style="padding: 6px 12px; background: #6c757d; color: white; text-decoration: none; border-radius: 4px; font-size: 12px;">Notifications</a>
-              <a routerLink="/dashboard/my-profile" style="padding: 6px 12px; background: #6c757d; color: white; text-decoration: none; border-radius: 4px; font-size: 12px;">My Profile</a>
-            </div>
-          </div>
-        </div>
-
         <!-- Dashboard Header -->
         <div class="dashboard-header d-flex justify-content-between align-items-center flex-wrap">
           <div [class]="isDashboardPage() ? 'welcome-message' : 'search-container'">
-            <h1 *ngIf="isDashboardPage()">Welcome back, {{ currentUser()?.name || 'User' }}</h1>
+            <h1 *ngIf="isDashboardPage()">Welcome back, {{ getUserDisplayName() }}</h1>
             <div class="search-bar">
               <i class="fas fa-search"></i>
               <input type="text" placeholder="Search here" [(ngModel)]="searchQuery">
@@ -112,7 +81,7 @@ interface MenuItem {
               <span>{{ getUserInitials() }}</span>
             </div>
             <div class="user-info">
-              <h3>{{ currentUser()?.name || 'User' }}</h3>
+              <h3>{{ getUserDisplayName() }}</h3>
               <p>{{ getUserTypeLabel() }}</p>
             </div>
           </div>
@@ -126,47 +95,50 @@ interface MenuItem {
   styleUrls: ['../../styles/components/dashboard-layout.scss']
 })
 export class DashboardLayout implements OnInit {
-  // Expose UserType enum to template
-  UserType = UserType;
-  
   sidebarOpen = signal(false);
   searchQuery = '';
   currentUser = signal<User | null>(null);
 
   menuItems: MenuItem[] = [
-    { label: 'Dashboard', icon: 'fas fa-tachometer-alt', route: '/dashboard', userTypes: [UserType.Student, UserType.Proctor, UserType.CoordinationOfficer] },
-    { label: 'File a Complaint', icon: 'fas fa-file-alt', route: '/dashboard/file-complaint', userTypes: [UserType.Student] },
-    { label: 'My Complaints', icon: 'fas fa-list', route: '/dashboard/my-complaints', userTypes: [UserType.Student] },
-    { label: 'Assign Cases', icon: 'fas fa-file-alt', route: '/dashboard/assign-cases', userTypes: [UserType.Proctor] },
-    { label: 'Schedule Meeting', icon: 'fas fa-calendar', route: '/dashboard/schedule-meeting', userTypes: [UserType.Proctor] },
-    { label: 'Manage Cases', icon: 'fas fa-file-alt', route: '/dashboard/manage-cases', userTypes: [UserType.CoordinationOfficer] },
-    { label: 'Meeting Schedule', icon: 'fas fa-list', route: '/dashboard/meeting-schedule', userTypes: [UserType.CoordinationOfficer] },
-    { label: 'Notifications', icon: 'fas fa-bell', route: '/dashboard/notifications', userTypes: [UserType.Student, UserType.Proctor, UserType.CoordinationOfficer] }
+    { label: 'Dashboard', icon: 'fas fa-tachometer-alt', route: '/dashboard', userTypes: [UserTypes.Student, UserTypes.Proctor, UserTypes.CoordinationOfficer] },
+    { label: 'File a Complaint', icon: 'fas fa-file-alt', route: '/dashboard/file-complaint', userTypes: [UserTypes.Student] },
+    { label: 'My Complaints', icon: 'fas fa-list', route: '/dashboard/my-complaints', userTypes: [UserTypes.Student] },
+    { label: 'Assign Cases', icon: 'fas fa-file-alt', route: '/dashboard/assign-cases', userTypes: [UserTypes.Proctor] },
+    { label: 'Schedule Meeting', icon: 'fas fa-calendar', route: '/dashboard/schedule-meeting', userTypes: [UserTypes.Proctor] },
+    { label: 'Manage Cases', icon: 'fas fa-file-alt', route: '/dashboard/manage-cases', userTypes: [UserTypes.CoordinationOfficer] },
+    { label: 'Meeting Schedule', icon: 'fas fa-list', route: '/dashboard/meeting-schedule', userTypes: [UserTypes.CoordinationOfficer] },
+    { label: 'Notifications', icon: 'fas fa-bell', route: '/dashboard/notifications', userTypes: [UserTypes.Student, UserTypes.Proctor, UserTypes.CoordinationOfficer] }
   ];
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute) {
-    // Initialize user immediately in constructor
-    let user = UserService.getCurrentUser();
-    if (!user) {
-      // Initialize with mock user if none exists (for development - no backend)
-      UserService.setCurrentUser({
-        id: 1,
-        name: 'Alex Hales',
-        email: 'alex@example.com',
-        userType: UserType.CoordinationOfficer
-      });
-      user = UserService.getCurrentUser();
+  constructor(
+    private router: Router, 
+    private activatedRoute: ActivatedRoute,
+    private authService: AuthService
+  ) {
+    // Initialize user from UserService
+    const user = UserService.getCurrentUser();
+    if (user) {
+      this.currentUser.set(user);
     }
-    this.currentUser.set(user);
   }
 
   ngOnInit(): void {
-    // Ensure user is set (in case it wasn't set in constructor)
-    if (!this.currentUser()) {
-      const user = UserService.getCurrentUser();
-      if (user) {
-        this.currentUser.set(user);
-      }
+    // Load current user from API if not already loaded
+    const user = UserService.getCurrentUser();
+    if (user) {
+      this.currentUser.set(user);
+    } else {
+      // Try to fetch user from API
+      this.authService.getCurrentUser().subscribe({
+        next: (user) => {
+          this.currentUser.set(user);
+        },
+        error: (error) => {
+          console.error('Error loading current user:', error);
+          // If not authenticated, redirect to login
+          this.router.navigate(['/login']);
+        }
+      });
     }
   }
 
@@ -180,8 +152,15 @@ export class DashboardLayout implements OnInit {
     this.sidebarOpen.update(value => !value);
   }
 
+  getUserDisplayName(): string {
+    const user = this.currentUser();
+    if (!user) return 'User';
+    return user.name || user.fullName || user.userName || user.email || 'User';
+  }
+
   getUserInitials(): string {
-    const name = this.currentUser()?.name || '';
+    const name = this.getUserDisplayName();
+    if (!name || name === 'User') return 'U';
     const parts = name.split(' ');
     if (parts.length >= 2) {
       return (parts[0][0] + parts[1][0]).toUpperCase();
@@ -192,52 +171,23 @@ export class DashboardLayout implements OnInit {
   getUserTypeLabel(): string {
     const userType = UserService.getUserType();
     switch (userType) {
-      case UserType.Student:
+      case UserTypes.Student:
         return 'Student';
-      case UserType.Proctor:
+      case UserTypes.Proctor:
         return 'Proctor';
-      case UserType.CoordinationOfficer:
+      case UserTypes.CoordinationOfficer:
         return 'Co-ordination Officer';
       default:
         return 'User';
     }
   }
 
-  getUserType(): UserType | null {
+  getUserType(): UserTypes | null {
     return UserService.getUserType();
   }
 
   isDashboardPage(): boolean {
     return this.router.url === '/dashboard' || this.router.url === '/dashboard/';
-  }
-
-  switchUser(userType: UserType): void {
-    const mockUsers = {
-      [UserType.Student]: {
-        id: 1,
-        name: 'John Student',
-        email: 'student@example.com',
-        userType: UserType.Student
-      },
-      [UserType.Proctor]: {
-        id: 2,
-        name: 'Jane Proctor',
-        email: 'proctor@example.com',
-        userType: UserType.Proctor
-      },
-      [UserType.CoordinationOfficer]: {
-        id: 3,
-        name: 'Alex Hales',
-        email: 'officer@example.com',
-        userType: UserType.CoordinationOfficer
-      }
-    };
-
-    const user = mockUsers[userType];
-    UserService.setCurrentUser(user);
-    this.currentUser.set(user);
-    // Navigate to dashboard to refresh the view and update menu items
-    this.router.navigate(['/dashboard']);
   }
 }
 

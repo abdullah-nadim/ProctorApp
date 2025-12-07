@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { UserService } from '../models/user';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'my-profile-page',

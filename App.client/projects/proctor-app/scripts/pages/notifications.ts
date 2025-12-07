@@ -43,40 +43,9 @@ export class NotificationsPage implements OnInit {
   }
 
   loadNotifications(): void {
-    // Mock data - replace with actual API call
-    const mockNotifications: Notification[] = [
-      {
-        message: 'Your complaint has been submitted.',
-        time: '5 minutes ago',
-        caseId: '#C0000004',
-        read: false
-      },
-      {
-        message: 'Your case status has been updated to "In Progress".',
-        time: '2 hours ago',
-        caseId: '#C0000003',
-        read: false
-      },
-      {
-        message: 'New evidence has been requested for your case.',
-        time: '1 day ago',
-        caseId: '#C0000002',
-        read: false
-      },
-      {
-        message: 'Your case has been resolved successfully.',
-        time: '3 days ago',
-        caseId: '#C0000001',
-        read: true
-      },
-      {
-        message: 'A meeting has been scheduled to discuss your complaint.',
-        time: '1 week ago',
-        caseId: '#C0000005',
-        read: true
-      }
-    ];
-    this.notifications.set(mockNotifications);
+    // TODO: Implement API call to load notifications
+    // For now, set empty array
+    this.notifications.set([]);
   }
 }
 

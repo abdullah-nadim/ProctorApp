@@ -2,8 +2,12 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { ComplaintService } from '../services/complaint.service';
+import { Complaint } from '../models/complaint';
+import { ComplaintStatus } from '../models/user';
+import { UserService } from '../services/user.service';
 
-interface Complaint {
+interface ComplaintDisplay {
   id: string;
   subject: string;
   date: string;
@@ -87,22 +91,74 @@ interface Complaint {
   styleUrls: ['../../styles/pages/my-complaints.scss']
 })
 export class MyComplaintsPage implements OnInit {
-  complaints = signal<Complaint[]>([]);
+  complaints = signal<ComplaintDisplay[]>([]);
   filterStatus: 'all' | 'pending' | 'progress' | 'solved' = 'all';
+  isLoading = signal(false);
+
+  constructor(private complaintService: ComplaintService) {}
 
   ngOnInit(): void {
     this.loadComplaints();
   }
 
   loadComplaints(): void {
-    // Mock data - replace with actual API call
-    const mockComplaints: Complaint[] = [
-      { id: '#C0000004', subject: 'Drugs', date: 'Today', status: 'pending', description: 'Drug related complaint' },
-      { id: '#C0000003', subject: 'Conflict', date: '30-04-25', status: 'progress', description: 'Conflict complaint' },
-      { id: '#C0000002', subject: 'Cyber Bullying', date: '27-04-25', status: 'solved', description: 'Cyber bullying complaint' },
-      { id: '#C0000001', subject: 'Ragging', date: '02-02-25', status: 'solved', description: 'Ragging complaint' }
-    ];
-    this.complaints.set(mockComplaints);
+    this.isLoading.set(true);
+    const currentUser = UserService.getCurrentUser();
+    
+    if (!currentUser) {
+      console.error('No current user found');
+      this.complaints.set([]);
+      this.isLoading.set(false);
+      return;
+    }
+
+    this.complaintService.getComplaintsByComplainant(currentUser.id).subscribe({
+      next: (complaints: Complaint[]) => {
+        this.complaints.set(this.mapComplaintsToDisplay(complaints));
+        this.isLoading.set(false);
+      },
+      error: (error) => {
+        console.error('Error loading complaints:', error);
+        this.complaints.set([]);
+        this.isLoading.set(false);
+      }
+    });
+  }
+
+  mapComplaintsToDisplay(complaints: Complaint[]): ComplaintDisplay[] {
+    return complaints.map(complaint => ({
+      id: `#C${String(complaint.id).padStart(8, '0')}`,
+      subject: complaint.title,
+      date: this.formatDate(complaint.complaintDate),
+      status: this.mapStatus(complaint.status),
+      description: complaint.description
+    }));
+  }
+
+  mapStatus(status: string): 'pending' | 'progress' | 'solved' {
+    switch (status) {
+      case ComplaintStatus.Pending:
+        return 'pending';
+      case ComplaintStatus.UnderInvestigation:
+        return 'progress';
+      case ComplaintStatus.Resolved:
+      case ComplaintStatus.Dismissed:
+        return 'solved';
+      default:
+        return 'pending';
+    }
+  }
+
+  formatDate(dateString: string): string {
+    if (!dateString) return 'Unknown';
+    const date = new Date(dateString);
+    const today = new Date();
+    
+    if (date.toDateString() === today.toDateString()) {
+      return 'Today';
+    } else {
+      return date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' });
+    }
   }
 
   filteredComplaints() {
