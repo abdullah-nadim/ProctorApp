@@ -23,8 +23,6 @@ namespace App.API.Contracts.Notifications
         public string RelatedEntityType { get; set; }
         public int? RelatedEntityId { get; set; }
         public string? ActionUrl { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public DateTime ModifiedOn { get; set; }
 
         public User? User { get; set; }
     }

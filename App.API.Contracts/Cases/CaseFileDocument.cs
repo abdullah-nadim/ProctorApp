@@ -16,8 +16,6 @@ namespace App.API.Contracts.Cases
         public string DocumentPath { get; set; }
         public string DocumentType { get; set; }
         public DateTime UploadedAt { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public DateTime ModifiedOn { get; set; }
     }
 }
 

@@ -15,8 +15,7 @@ namespace App.API.Contracts.Meetings
         public int UserId { get; set; }
         public string Role { get; set; }
         public bool Attended { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public DateTime ModifiedOn { get; set; }
+        
 
         public Meeting? Meeting { get; set; }
         public User? User { get; set; }

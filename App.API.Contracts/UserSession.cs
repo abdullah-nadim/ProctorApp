@@ -14,7 +14,5 @@ namespace App.API.Contracts
         public string SessionKey { get; set; }
         public int UserId { get; set; }
         public bool IsActive { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public DateTime ModifiedOn { get; set; }
     }
 } 

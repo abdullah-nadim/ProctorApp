@@ -41,8 +41,6 @@ namespace App.API.Contracts.Complaints
         public int? CategoryId { get; set; }
         public string Location { get; set; }
         public DateTime? IncidentDate { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public DateTime ModifiedOn { get; set; }
 
         public User? Complainant { get; set; }
         public ComplaintCategory? Category { get; set; }

@@ -1,10 +1,12 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, RouterOutlet, ActivatedRoute, Router } from '@angular/router';
 import { User, UserTypes } from '../models/user';
 import { UserService } from '../services/user.service';
 import { AuthService } from '../services/auth.service';
+import { SignalRService } from '../services/signalr.service';
+import { NotificationToastComponent } from './notification-toast';
 
 interface MenuItem {
   label: string;
@@ -16,7 +18,7 @@ interface MenuItem {
 @Component({
   selector: 'dashboard-layout',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, RouterOutlet],
+  imports: [CommonModule, FormsModule, RouterModule, RouterOutlet, NotificationToastComponent],
   template: `
     <!-- Fixed Top Bar -->
     <div class="fixed-top-bar"></div>
@@ -91,10 +93,13 @@ interface MenuItem {
         <router-outlet></router-outlet>
       </main>
     </div>
+    
+    <!-- Notification Toast -->
+    <notification-toast></notification-toast>
   `,
   styleUrls: ['../../styles/components/dashboard-layout.scss']
 })
-export class DashboardLayout implements OnInit {
+export class DashboardLayout implements OnInit, OnDestroy {
   sidebarOpen = signal(false);
   searchQuery = '';
   currentUser = signal<User | null>(null);
@@ -104,16 +109,16 @@ export class DashboardLayout implements OnInit {
     { label: 'File a Complaint', icon: 'fas fa-file-alt', route: '/dashboard/file-complaint', userTypes: [UserTypes.Student] },
     { label: 'My Complaints', icon: 'fas fa-list', route: '/dashboard/my-complaints', userTypes: [UserTypes.Student] },
     { label: 'Assign Cases', icon: 'fas fa-file-alt', route: '/dashboard/assign-cases', userTypes: [UserTypes.Proctor] },
-    { label: 'Schedule Meeting', icon: 'fas fa-calendar', route: '/dashboard/schedule-meeting', userTypes: [UserTypes.Proctor] },
+    { label: 'Schedule Meeting', icon: 'fas fa-calendar', route: '/dashboard/schedule-meeting', userTypes: [UserTypes.Proctor, UserTypes.CoordinationOfficer] },
     { label: 'Manage Cases', icon: 'fas fa-file-alt', route: '/dashboard/manage-cases', userTypes: [UserTypes.CoordinationOfficer] },
-    { label: 'Meeting Schedule', icon: 'fas fa-list', route: '/dashboard/meeting-schedule', userTypes: [UserTypes.CoordinationOfficer] },
     { label: 'Notifications', icon: 'fas fa-bell', route: '/dashboard/notifications', userTypes: [UserTypes.Student, UserTypes.Proctor, UserTypes.CoordinationOfficer] }
   ];
 
   constructor(
     private router: Router, 
     private activatedRoute: ActivatedRoute,
-    private authService: AuthService
+    private authService: AuthService,
+    private signalRService: SignalRService
   ) {
     // Initialize user from UserService
     const user = UserService.getCurrentUser();
@@ -122,7 +127,7 @@ export class DashboardLayout implements OnInit {
     }
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     // Load current user from API if not already loaded
     const user = UserService.getCurrentUser();
     if (user) {
@@ -140,6 +145,15 @@ export class DashboardLayout implements OnInit {
         }
       });
     }
+
+    // Start SignalR connection for real-time notifications
+    await this.signalRService.requestNotificationPermission();
+    await this.signalRService.startConnection();
+  }
+
+  ngOnDestroy(): void {
+    // Stop SignalR connection when component is destroyed
+    this.signalRService.stopConnection();
   }
 
   visibleMenuItems(): MenuItem[] {

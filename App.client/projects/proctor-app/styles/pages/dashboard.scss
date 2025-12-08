@@ -14,23 +14,23 @@
   text-align: center;
 
   &.total-cases {
-    border-top: 12px solid var(--card-blue);
+    border-top: 12px solid #539bf5;
   }
 
   &.cases-filed {
-    border-top: 12px solid var(--card-blue);
+    border-top: 12px solid #539bf5;
   }
 
   &.cases-pending {
-    border-top: 12px solid var(--card-purple);
+    border-top: 12px solid #a25bff;
   }
 
   &.cases-progress {
-    border-top: 12px solid var(--card-yellow);
+    border-top: 12px solid #f7b63f;
   }
 
   &.cases-solved {
-    border-top: 12px solid var(--card-green);
+    border-top: 12px solid #4bb543;
   }
 }
 
@@ -99,7 +99,7 @@
 }
 
 .btn-action {
-  background-color: var(--primary-blue);
+  background-color: #0b509e;
   color: white;
   border: none;
   padding: 8px 15px;
@@ -148,15 +148,15 @@
   gap: 5px;
 
   &.pending {
-    color: var(--status-pending);
+    color: #6c757d;
   }
 
   &.progress {
-    color: var(--status-progress);
+    color: #007bff;
   }
 
   &.done {
-    color: var(--status-done);
+    color: #28a745;
   }
 }
 
@@ -168,15 +168,15 @@
 }
 
 .status.pending .status-dot {
-  background-color: var(--status-pending);
+  background-color: #6c757d;
 }
 
 .status.progress .status-dot {
-  background-color: var(--status-progress);
+  background-color: #007bff;
 }
 
 .status.done .status-dot {
-  background-color: var(--status-done);
+  background-color: #28a745;
 }
 
 .show-all-cases {
@@ -184,7 +184,7 @@
   margin-top: 20px;
 
   a {
-    color: var(--primary-blue);
+    color: #0b509e;
     text-decoration: none;
     font-weight: 600;
     display: inline-flex;

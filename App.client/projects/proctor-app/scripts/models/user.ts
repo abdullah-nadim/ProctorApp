@@ -11,7 +11,8 @@ export enum ComplaintStatus {
   Pending = 'Pending',
   UnderInvestigation = 'UnderInvestigation',
   Resolved = 'Resolved',
-  Dismissed = 'Dismissed'
+  Dismissed = 'Dismissed',
+  Assigned = 'Assigned'
 }
 
 export enum Priority {

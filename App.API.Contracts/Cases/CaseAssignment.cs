@@ -21,9 +21,6 @@ namespace App.API.Contracts.Cases
         public DateTime? Deadline { get; set; }
         public string Status { get; set; }
         public string? Notes { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public DateTime ModifiedOn { get; set; }
-
         public Complaint? Complaint { get; set; }
         public User? Assignee { get; set; }
         public User? Assigner { get; set; }

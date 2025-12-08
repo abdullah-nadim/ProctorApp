@@ -30,12 +30,12 @@
   color: #6c757d;
 
   &:hover {
-    color: var(--primary-blue);
+    color: #0b509e;
   }
 
   &.active {
-    color: var(--primary-blue);
-    border-bottom-color: var(--primary-blue);
+    color: #0b509e;
+    border-bottom-color: #0b509e;
     font-weight: 600;
   }
 }
@@ -75,6 +75,100 @@
   td {
     padding: 12px 15px;
     border-bottom: 1px solid #eee;
+  }
+}
+
+/* Modal */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 10px;
+  padding: 24px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+
+  h3 {
+    margin: 0 0 16px;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  .form-group {
+    margin-bottom: 14px;
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #2d2d2d;
+    }
+
+    select,
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 1rem;
+      font-family: 'Open Sans', sans-serif;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+      &:focus {
+        outline: none;
+        border-color: #0b509e;
+        box-shadow: 0 0 0 0.15rem rgba(11, 80, 158, 0.2);
+      }
+    }
+
+    textarea {
+      resize: vertical;
+    }
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+
+    .btn-primary,
+    .btn-secondary {
+      border: none;
+      padding: 10px 18px;
+      border-radius: 24px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: #0b509e;
+      color: #fff;
+
+      &:hover {
+        background: #0a4280;
+      }
+    }
+
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #2d2d2d;
+
+      &:hover {
+        background: #e2e2e2;
+      }
+    }
   }
 }
 

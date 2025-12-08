@@ -8,7 +8,7 @@ import { ComplaintService } from '../services/complaint.service';
 import { Complaint } from '../models/complaint';
 
 interface Case {
-  id: string;
+  id: number;
   category: string;
   date: string;
   status: 'pending' | 'progress' | 'done';
@@ -141,7 +141,7 @@ export class DashboardPage implements OnInit {
 
   mapComplaintsToCases(complaints: Complaint[]): Case[] {
     return complaints.map(complaint => ({
-      id: `#C${String(complaint.id).padStart(8, '0')}`,
+      id: complaint.id,
       category: complaint.category?.name || 'Uncategorized',
       date: this.formatDate(complaint.complaintDate),
       status: this.mapStatus(complaint.status)
@@ -152,6 +152,7 @@ export class DashboardPage implements OnInit {
     switch (status) {
       case ComplaintStatus.Pending:
         return 'pending';
+      case ComplaintStatus.Assigned:
       case ComplaintStatus.UnderInvestigation:
         return 'progress';
       case ComplaintStatus.Resolved:

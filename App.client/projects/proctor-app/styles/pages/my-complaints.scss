@@ -16,7 +16,7 @@
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 30px;
-  color: var(--primary-blue);
+  color: #0b509e;
 }
 
 .filter-buttons {
@@ -36,14 +36,14 @@
   font-size: 1rem;
 
   &:hover {
-    border-color: var(--primary-blue);
-    color: var(--primary-blue);
+    border-color: #0b509e;
+    color: #0b509e;
   }
 
   &.active {
-    background-color: var(--primary-blue);
+    background-color: #0b509e;
     color: white;
-    border-color: var(--primary-blue);
+    border-color: #0b509e;
   }
 }
 
@@ -79,7 +79,7 @@
 }
 
 .view-btn {
-  background-color: var(--primary-blue);
+  background-color: #0b509e;
   color: white;
   border: none;
   padding: 8px 20px;

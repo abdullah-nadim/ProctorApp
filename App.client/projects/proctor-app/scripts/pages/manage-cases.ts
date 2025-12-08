@@ -7,10 +7,12 @@ import { Complaint } from '../models/complaint';
 import { ComplaintStatus } from '../models/user';
 
 interface Case {
-  id: string;
+  id: number;
   subject: string;
   date: string;
   status: 'pending' | 'progress' | 'solved';
+  complaintId: number;
+  actualStatus: string; // Store the actual complaint status
 }
 
 @Component({
@@ -70,18 +72,77 @@ interface Case {
                 <td class="case-subject">{{ case.subject }}</td>
                 <td class="case-date">{{ case.date }}</td>
                 <td>
-                  <div class="status" [ngClass]="case.status">
-                    <span class="status-dot"></span> {{ getStatusLabel(case.status) }}
-                  </div>
+                  <select 
+                    class="status-select" 
+                    [value]="case.actualStatus"
+                    (change)="onStatusChange(case, $event)">
+                    <option value="Pending">Pending</option>
+                    <option value="Assigned">Assigned</option>
+                    <option value="UnderInvestigation">Under Investigation</option>
+                    <option value="Resolved">Resolved</option>
+                    <option value="Dismissed">Dismissed</option>
+                  </select>
                 </td>
                 <td>
-                  <button class="status-btn" [routerLink]="['/dashboard/case-details', case.id]">
-                    Open
-                  </button>
+                  <div class="action-buttons">
+                    <button class="status-btn" [routerLink]="['/dashboard/case-details', case.complaintId]">
+                      Open
+                    </button>
+                    <button 
+                      *ngIf="case.status !== 'solved'" 
+                      class="close-btn" 
+                      (click)="openCloseCaseModal(case)">
+                      Close Case
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
           </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Close Case Modal -->
+    <div class="modal-overlay" *ngIf="showCloseModal()" (click)="closeModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Close Case</h2>
+          <button class="modal-close" (click)="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>Select the final status for this case:</p>
+          <div class="status-options">
+            <label class="status-option">
+              <input 
+                type="radio" 
+                name="closeStatus" 
+                value="Resolved" 
+                [(ngModel)]="closeCaseData.status"
+                required>
+              <span class="status-label resolved">Resolved</span>
+              <span class="status-description">Case has been successfully resolved</span>
+            </label>
+            <label class="status-option">
+              <input 
+                type="radio" 
+                name="closeStatus" 
+                value="Dismissed" 
+                [(ngModel)]="closeCaseData.status"
+                required>
+              <span class="status-label dismissed">Dismissed</span>
+              <span class="status-description">Case has been dismissed</span>
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+          <button 
+            class="btn btn-primary" 
+            (click)="onCloseCase()" 
+            [disabled]="!closeCaseData.status || isClosing()">
+            {{ isClosing() ? 'Closing...' : 'Close Case' }}
+          </button>
         </div>
       </div>
     </div>
@@ -92,6 +153,13 @@ export class ManageCasesPage implements OnInit {
   cases = signal<Case[]>([]);
   filterStatus: 'all' | 'pending' | 'progress' | 'solved' = 'all';
   isLoading = signal(false);
+  isClosing = signal(false);
+  showCloseModal = signal(false);
+  selectedCase: Case | null = null;
+  
+  closeCaseData = {
+    status: ''
+  };
 
   constructor(private complaintService: ComplaintService) {}
 
@@ -117,10 +185,12 @@ export class ManageCasesPage implements OnInit {
 
   mapComplaintsToCases(complaints: Complaint[]): Case[] {
     return complaints.map(complaint => ({
-      id: `#C${String(complaint.id).padStart(8, '0')}`,
+      id: complaint.id,
       subject: complaint.title,
       date: this.formatDate(complaint.complaintDate),
-      status: this.mapStatus(complaint.status)
+      status: this.mapStatus(complaint.status),
+      complaintId: complaint.id,
+      actualStatus: complaint.status // Store the actual status
     }));
   }
 
@@ -129,6 +199,7 @@ export class ManageCasesPage implements OnInit {
       case ComplaintStatus.Pending:
         return 'pending';
       case ComplaintStatus.UnderInvestigation:
+      case ComplaintStatus.Assigned:
         return 'progress';
       case ComplaintStatus.Resolved:
       case ComplaintStatus.Dismissed:
@@ -168,6 +239,87 @@ export class ManageCasesPage implements OnInit {
       default:
         return status;
     }
+  }
+
+  openCloseCaseModal(caseItem: Case): void {
+    this.selectedCase = caseItem;
+    this.closeCaseData.status = '';
+    this.showCloseModal.set(true);
+  }
+
+  closeModal(): void {
+    this.showCloseModal.set(false);
+    this.selectedCase = null;
+    this.closeCaseData.status = '';
+  }
+
+  onCloseCase(): void {
+    if (!this.selectedCase || !this.closeCaseData.status || this.isClosing()) return;
+
+    this.isClosing.set(true);
+    
+    // Get the full complaint to update
+    this.complaintService.getComplaintById(this.selectedCase.complaintId).subscribe({
+      next: (complaint: Complaint) => {
+        complaint.status = this.closeCaseData.status;
+        this.complaintService.updateComplaint(complaint).subscribe({
+          next: () => {
+            this.isClosing.set(false);
+            this.closeModal();
+            this.loadCases(); // Reload cases to reflect the updated status
+            alert('Case closed successfully!');
+          },
+          error: (error) => {
+            console.error('Error closing case:', error);
+            this.isClosing.set(false);
+            alert('Failed to close case. Please try again.');
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Error loading complaint:', error);
+        this.isClosing.set(false);
+        alert('Failed to load case details. Please try again.');
+      }
+    });
+  }
+
+  onStatusChange(caseItem: Case, event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const newStatus = target.value;
+    const previousStatus = caseItem.actualStatus;
+    
+    // Optimistically update the UI
+    caseItem.actualStatus = newStatus;
+    caseItem.status = this.mapStatus(newStatus);
+    
+    // Get the full complaint to update
+    this.complaintService.getComplaintById(caseItem.complaintId).subscribe({
+      next: (complaint: Complaint) => {
+        complaint.status = newStatus;
+        this.complaintService.updateComplaint(complaint).subscribe({
+          next: () => {
+            this.loadCases(); // Reload cases to reflect the updated status
+          },
+          error: (error) => {
+            console.error('Error updating case status:', error);
+            alert('Failed to update case status. Please try again.');
+            // Reset the select to previous value
+            target.value = previousStatus;
+            caseItem.actualStatus = previousStatus;
+            caseItem.status = this.mapStatus(previousStatus);
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Error loading complaint:', error);
+        alert('Failed to load case details. Please try again.');
+        // Reset the select to previous value
+        target.value = previousStatus;
+        caseItem.actualStatus = previousStatus;
+        caseItem.status = this.mapStatus(previousStatus);
+      }
+    });
   }
 }
 

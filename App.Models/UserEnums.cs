@@ -15,7 +15,8 @@ namespace App.Models
         Pending,
         UnderInvestigation,
         Resolved,
-        Dismissed
+        Dismissed,
+        Assigned
     }
 
     public enum Priority

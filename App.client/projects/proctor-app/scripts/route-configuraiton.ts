@@ -18,6 +18,8 @@ import { MyComplaintsPage } from '@pages/my-complaints';
 import { AssignCasesPage } from '@pages/assign-cases';
 import { ScheduleMeetingPage } from '@pages/schedule-meeting';
 import { ManageCasesPage } from '@pages/manage-cases';
+import { CaseDetailsPage } from '@pages/case-details';
+import { MeetingDetailsPage } from '@pages/meeting-details';
 
 export const RouteConfiguration: Routes = [
   {
@@ -49,8 +51,10 @@ export const RouteConfiguration: Routes = [
       // Proctor routes
       { path: 'assign-cases', component: AssignCasesPage },
       { path: 'schedule-meeting', component: ScheduleMeetingPage },
+      { path: 'meeting-details/:id', component: MeetingDetailsPage },
       // Co-ordination Officer routes
       { path: 'manage-cases', component: ManageCasesPage },
+      { path: 'case-details/:id', component: CaseDetailsPage },
       { path: '**', redirectTo: '', pathMatch: 'full' }
     ]
   },

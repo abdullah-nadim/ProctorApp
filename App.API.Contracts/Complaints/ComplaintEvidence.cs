@@ -18,8 +18,6 @@ namespace App.API.Contracts.Complaints
         public int UploadedBy { get; set; }
         public DateTime UploadedAt { get; set; }
         public string? Description { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public DateTime ModifiedOn { get; set; }
 
         public User? Uploader { get; set; }
     }

@@ -19,8 +19,6 @@ namespace App.API.Contracts.Explanations
         public string ExplanationText { get; set; }
         public DateTime SubmittedAt { get; set; }
         public bool IsComplainant { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public DateTime ModifiedOn { get; set; }
 
         public Complaint? Complaint { get; set; }
         public User? Submitter { get; set; }

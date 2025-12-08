@@ -44,8 +44,32 @@ namespace App.API
             return Ok(Meeting.ToContracts(await _MeetingServices.GetMeetingsByComplaint(complaintId), _Mapper));
         }
 
+        [HttpGet("scheduled-by/{scheduledBy}")]
+        public async Task<IActionResult> GetMeetingsByScheduledBy(int scheduledBy)
+        {
+            return Ok(Meeting.ToContracts(await _MeetingServices.GetMeetingsByScheduledBy(scheduledBy), _Mapper));
+        }
+
+        [HttpGet("for-user/{userId}")]
+        public async Task<IActionResult> GetMeetingsForUser(int userId)
+        {
+            return Ok(Meeting.ToContracts(await _MeetingServices.GetMeetingsForUser(userId), _Mapper));
+        }
+
+        [HttpPut("{id}/close")]
+        public async Task<IActionResult> CloseMeeting(int id, [FromBody] CloseMeetingRequest request)
+        {
+            await _MeetingServices.CloseMeeting(id, request.Outcome ?? string.Empty);
+            return Ok();
+        }
+
         private readonly MeetingServices _MeetingServices;
         private readonly IMapper _Mapper;
+    }
+
+    public class CloseMeetingRequest
+    {
+        public string? Outcome { get; set; }
     }
 }
 

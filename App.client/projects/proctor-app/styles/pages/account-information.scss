@@ -14,7 +14,7 @@
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 30px;
-  color: var(--primary-blue);
+  color: #0b509e;
 }
 
 .form-card {
@@ -43,7 +43,7 @@
 
     &:focus {
       outline: none;
-      border-color: var(--primary-blue);
+      border-color: #0b509e;
     }
   }
 }
@@ -64,7 +64,7 @@
   transition: all 0.3s;
 
   &.btn-primary {
-    background-color: var(--primary-blue);
+    background-color: #0b509e;
     color: white;
 
     &:hover:not(:disabled) {

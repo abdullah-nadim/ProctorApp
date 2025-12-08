@@ -15,6 +15,14 @@ export class MeetingService {
     return this.api.getMeetingsByComplaint(complaintId);
   }
 
+  getMeetingsByScheduledBy(scheduledBy: number): Observable<Meeting[]> {
+    return this.api.getMeetingsByScheduledBy(scheduledBy);
+  }
+
+  getMeetingsForUser(userId: number): Observable<Meeting[]> {
+    return this.api.getMeetingsForUser(userId);
+  }
+
   createMeeting(meeting: Meeting): Observable<any> {
     return this.api.createMeeting(meeting);
   }
@@ -25,6 +33,10 @@ export class MeetingService {
 
   getAllMeetings(): Observable<Meeting[]> {
     return this.api.getAllMeetings();
+  }
+
+  closeMeeting(id: number, outcome: string): Observable<any> {
+    return this.api.closeMeeting(id, outcome);
   }
 }
 

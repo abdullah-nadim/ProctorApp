@@ -10,6 +10,7 @@ export class Meeting {
   durationMinutes: number;
   location: string;
   agenda?: string | null;
+  notes?: string | null;
   status: string;
   outcome?: string | null;
   createdOn: string;
@@ -24,7 +25,7 @@ export class Meeting {
     this.scheduledAt = new Date().toISOString();
     this.durationMinutes = 30;
     this.location = '';
-    this.agenda = this.outcome = null;
+    this.agenda = this.outcome = this.notes = null;
     this.status = MeetingStatus.Scheduled;
     this.createdOn = this.modifiedOn = '';
     this.participants = [];

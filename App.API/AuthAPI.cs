@@ -97,7 +97,7 @@ namespace App.API
             {
                 FullName = request.FullName,
                 UserName = string.IsNullOrWhiteSpace(request.UserName) ? request.Email : request.UserName,
-                Phone = request.Phone,
+                  Phone = request.Phone,
                 Department = request.Department,
                 OrganizationId = request.OrganizationId,
                 AdvisorName = request.AdvisorName
@@ -128,7 +128,7 @@ namespace App.API
 
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
-        {
+         {
             await _AuthService.LogoutAsync();
             Response.Cookies.Delete("JWTToken");
             return Ok(new { Success = true, Message = "Logged out successfully." });

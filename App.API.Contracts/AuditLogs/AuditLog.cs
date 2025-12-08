@@ -9,7 +9,6 @@ namespace App.API.Contracts.AuditLogs
             Id = 0;
             Action = EntityType = string.Empty;
             OldValues = NewValues = IpAddress = UserAgent = null;
-            CreatedAt = DateTime.UtcNow;
         }
 
         public int Id { get; set; }
@@ -21,9 +20,6 @@ namespace App.API.Contracts.AuditLogs
         public string? NewValues { get; set; }
         public string? IpAddress { get; set; }
         public string? UserAgent { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public DateTime ModifiedOn { get; set; }
 
         public User? User { get; set; }
     }

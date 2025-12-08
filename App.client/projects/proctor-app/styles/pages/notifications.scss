@@ -14,7 +14,7 @@
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 30px;
-  color: var(--primary-blue);
+  color: #0b509e;
 }
 
 .notifications-list {
@@ -47,7 +47,7 @@
 .notification-dot {
   width: 12px;
   height: 12px;
-  background-color: var(--primary-blue);
+  background-color: #0b509e;
   border-radius: 50%;
   flex-shrink: 0;
   margin-top: 5px;
@@ -81,7 +81,7 @@
 
 .notification-case {
   font-size: 0.875rem;
-  color: var(--primary-blue);
+  color: #0b509e;
   margin: 0;
   font-weight: 600;
 }

@@ -7,7 +7,7 @@ namespace App.Models
         internal Meeting()
         {
             Location = string.Empty;
-            Agenda = Outcome = null;
+            Agenda = Outcome = Notes = null;
             DurationMinutes = 30;
             Status = MeetingStatus.Scheduled;
             Participants = new List<MeetingParticipant>();
@@ -27,6 +27,7 @@ namespace App.Models
             DurationMinutes = updated.DurationMinutes;
             Location = updated.Location;
             Agenda = updated.Agenda;
+            Notes = updated.Notes;
             return this;
         }
 
@@ -49,6 +50,7 @@ namespace App.Models
         public int DurationMinutes { get; set; }
         public string Location { get; set; }
         public string? Agenda { get; set; }
+        public string? Notes { get; set; }
         public MeetingStatus Status { get; set; }
         public string? Outcome { get; set; }
         public DateTime CreatedOn { get; set; }

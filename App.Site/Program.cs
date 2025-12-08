@@ -3,12 +3,14 @@ using App.Models;
 using App.Models.Repositories;
 using App.Repositories;
 using App.Services;
+using App.Services.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
 
 namespace App.Site
 {
@@ -45,11 +47,18 @@ namespace App.Site
             builder.Services.AddScoped<CaseAssignmentServices>();
             builder.Services.AddScoped<CaseFileServices>();
             builder.Services.AddScoped<MeetingServices>();
+            builder.Services.AddScoped<NotificationService>();
+            builder.Services.AddScoped<NotificationServices>();
             builder.Services.AddScoped<IAuthService, AuthServices>();
 
             builder.Services.AddAutoMapper(typeof(App.API.Contracts.AutoMapperProfile));
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews()
+                .AddApplicationPart(typeof(App.API.AuthAPI).Assembly)
+                .AddApplicationPart(typeof(App.API.NotificationAPI).Assembly);
             builder.Services.AddMemoryCache();
+
+            // Add SignalR
+            builder.Services.AddSignalR();
 
             // Configure CORS - Allow only localhost:4200
             builder.Services.AddCors(options =>
@@ -79,8 +88,11 @@ namespace App.Site
 
             builder.Services.AddAuthentication(options =>
             {
+                // Use JWT for API auth, but keep Identity cookie scheme for SignIn/SignOut
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultSignOutScheme = IdentityConstants.ApplicationScheme;
             })
             .AddJwtBearer(options =>
             {
@@ -100,10 +112,27 @@ namespace App.Site
                 {
                     OnMessageReceived = context =>
                     {
-                        context.Token = context.Request.Cookies["JWTToken"];
+                        var accessToken = context.Request.Query["access_token"];
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/notificationHub"))
+                        {
+                            context.Token = accessToken;
+                        }
+                        else
+                        {
+                            context.Token = context.Request.Cookies["JWTToken"];
+                        }
                         return Task.CompletedTask;
                     }
                 };
+            })
+            .AddCookie(IdentityConstants.ApplicationScheme, options =>
+            {
+                options.LoginPath = "/login";
+                options.LogoutPath = "/logout";
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest; // dev-friendly
+                options.Cookie.SameSite = SameSiteMode.Lax;
             });
 
             builder.Services.AddAuthorization(options =>
@@ -125,6 +154,7 @@ namespace App.Site
             using (var scope = app.Services.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+                
                 context.Database.Migrate();
             }
 
@@ -147,6 +177,9 @@ namespace App.Site
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.MapControllers();
+            
+            // Map SignalR Hub
+            app.MapHub<NotificationHub>("/notificationHub");
 
             app.Run();
         }

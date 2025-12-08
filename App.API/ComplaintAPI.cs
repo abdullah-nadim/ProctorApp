@@ -44,6 +44,14 @@ namespace App.API
             return Ok(Complaint.ToContract(complaint, _Mapper));
         }
 
+        // Return complaints that are not yet assigned (pending)
+        [HttpGet("unassigned")]
+        public async Task<IActionResult> GetUnassignedComplaints()
+        {
+            var complaints = await _ComplaintServices.GetUnassignedComplaints();
+            return Ok(Complaint.ToContracts(complaints, _Mapper));
+        }
+
         [HttpGet("complainant/{complainantId}")]
         public async Task<IActionResult> GetComplaintsByComplainant(int complainantId)
         {

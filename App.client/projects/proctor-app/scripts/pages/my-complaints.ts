@@ -8,7 +8,7 @@ import { ComplaintStatus } from '../models/user';
 import { UserService } from '../services/user.service';
 
 interface ComplaintDisplay {
-  id: string;
+  id: number;
   subject: string;
   date: string;
   status: 'pending' | 'progress' | 'solved';
@@ -127,7 +127,7 @@ export class MyComplaintsPage implements OnInit {
 
   mapComplaintsToDisplay(complaints: Complaint[]): ComplaintDisplay[] {
     return complaints.map(complaint => ({
-      id: `#C${String(complaint.id).padStart(8, '0')}`,
+      id: complaint.id,
       subject: complaint.title,
       date: this.formatDate(complaint.complaintDate),
       status: this.mapStatus(complaint.status),
@@ -139,6 +139,7 @@ export class MyComplaintsPage implements OnInit {
     switch (status) {
       case ComplaintStatus.Pending:
         return 'pending';
+      case ComplaintStatus.Assigned:
       case ComplaintStatus.UnderInvestigation:
         return 'progress';
       case ComplaintStatus.Resolved:

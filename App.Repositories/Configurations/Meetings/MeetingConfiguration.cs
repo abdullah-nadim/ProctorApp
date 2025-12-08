@@ -18,6 +18,7 @@ namespace App.Repositories.Configurations.Meetings
             builder.Property(m => m.DurationMinutes).IsRequired();
             builder.Property(m => m.Location).HasMaxLength(200).IsRequired();
             builder.Property(m => m.Agenda).HasMaxLength(1000).IsRequired(false);
+            builder.Property(m => m.Notes).HasMaxLength(2000).IsRequired(false);
             builder.Property(m => m.Status).HasColumnType("varchar(20)").HasConversion<string>().IsRequired();
             builder.Property(m => m.Outcome).HasMaxLength(2000).IsRequired(false);
 

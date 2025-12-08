@@ -9,7 +9,7 @@ namespace App.API.Contracts.Meetings
         {
             Id = 0;
             Location = string.Empty;
-            Agenda = Outcome = null;
+            Agenda = Outcome = Notes = null;
             DurationMinutes = 30;
             Status = "Scheduled";
             Participants = new List<MeetingParticipant>();
@@ -22,10 +22,9 @@ namespace App.API.Contracts.Meetings
         public int DurationMinutes { get; set; }
         public string Location { get; set; }
         public string? Agenda { get; set; }
+        public string? Notes { get; set; }
         public string Status { get; set; }
         public string? Outcome { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public DateTime ModifiedOn { get; set; }
 
         public Complaint? Complaint { get; set; }
         public User? Scheduler { get; set; }

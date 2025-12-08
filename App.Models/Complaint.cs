@@ -37,6 +37,7 @@ namespace App.Models
             AccusedName = updated.AccusedName;
             AccusedDetails = updated.AccusedDetails;
             Priority = updated.Priority;
+            Status = updated.Status;
             return this;
         }
 

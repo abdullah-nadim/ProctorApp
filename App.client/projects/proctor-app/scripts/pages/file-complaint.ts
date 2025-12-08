@@ -17,158 +17,255 @@ import { UserService } from '../services/user.service';
     <!-- Complaint Form Section -->
     <div class="complaint-form-section">
       <div class="form-container">
-        <h2 class="form-title">Fill the form</h2>
+        <h2 class="form-title">File a Complaint</h2>
+
+        <!-- Stepper -->
+        <div class="stepper">
+          <div class="step" [class.active]="currentStep() === 1">
+            <div class="circle">1</div>
+            <div class="label">Complaint Details</div>
+          </div>
+          <div class="step" [class.active]="currentStep() === 2">
+            <div class="circle">2</div>
+            <div class="label">Accused & Evidence</div>
+          </div>
+        </div>
         
         <form class="complaint-form" (ngSubmit)="onSubmit()" #complaintForm="ngForm">
-          <!-- Row 1: Select Subject -->
-          <div class="row">
-            <div class="col-md-12">
-              <div class="form-group">
-                <label for="category">Select Category <span class="required">*</span></label>
-                <select class="form-control" id="category" [(ngModel)]="formData.categoryId" name="categoryId" required>
-                  <option [ngValue]="null" disabled selected>Select a category</option>
-                  <option *ngFor="let category of categories()" [ngValue]="category.id">{{ category.name }}</option>
-                </select>
+          <!-- STEP 1 -->
+          <div *ngIf="currentStep() === 1">
+            <!-- Row 1: Select Category -->
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="category">Select Category <span class="required">*</span></label>
+                  <select class="form-control" id="category" [(ngModel)]="formStep1.categoryId" name="categoryId" required>
+                    <option [ngValue]="null" disabled>Select a category</option>
+                    <option *ngFor="let category of categories()" [ngValue]="category.id">{{ category.name }}</option>
+                  </select>
+                </div>
               </div>
+            </div>
+            
+            <!-- Row 2: Short Description -->
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="description">Short Description <span class="required">*</span></label>
+                  <textarea 
+                    class="form-control" 
+                    id="description" 
+                    rows="3" 
+                    placeholder="Briefly describe your complaint" 
+                    [(ngModel)]="formStep1.description"
+                    name="description"
+                    required></textarea>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Row 3: Name and Gender -->
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="name">Name of the Complainant <span class="required">*</span></label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="name" 
+                    placeholder="Enter your full name"
+                    [(ngModel)]="formStep1.name"
+                    name="name"
+                    required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="gender">Gender <span class="required">*</span></label>
+                  <select class="form-control" id="gender" [(ngModel)]="formStep1.gender" name="gender" required>
+                    <option value="" disabled>Select your gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Row 4: Student ID and Department -->
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="student-id">Student ID <span class="required">*</span></label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="student-id" 
+                    placeholder="Enter your student ID"
+                    [(ngModel)]="formStep1.organizationId"
+                    name="studentId"
+                    required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="department">Department <span class="required">*</span></label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="department" 
+                    placeholder="Enter your department"
+                    [(ngModel)]="formStep1.department"
+                    name="department"
+                    required>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Row 5: Contact No and Advisor's Name -->
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="contact">Contact No. <span class="required">*</span></label>
+                  <input 
+                    type="tel" 
+                    class="form-control" 
+                    id="contact" 
+                    placeholder="Enter your contact number"
+                    [(ngModel)]="formStep1.contact"
+                    name="contact"
+                    required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="advisor">Advisor's Name <span class="required">*</span></label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="advisor" 
+                    placeholder="Enter your advisor's name"
+                    [(ngModel)]="formStep1.advisor"
+                    name="advisor"
+                    required>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Row 6: Location and Incident Date -->
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="location">Location</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="location" 
+                    placeholder="Enter incident location"
+                    [(ngModel)]="formStep1.location"
+                    name="location">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="incidentDate">Incident Date</label>
+                  <input 
+                    type="date" 
+                    class="form-control" 
+                    id="incidentDate" 
+                    [(ngModel)]="formStep1.incidentDate"
+                    name="incidentDate">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-submit spaced">
+              <button type="button" class="btn-next" (click)="goToStep2()" [disabled]="isLoading()">
+                Next
+              </button>
             </div>
           </div>
-          
-          <!-- Row 2: Short Description -->
-          <div class="row">
-            <div class="col-md-12">
-              <div class="form-group">
-                <label for="description">Short Description <span class="required">*</span></label>
-                <textarea 
-                  class="form-control" 
-                  id="description" 
-                  rows="3" 
-                  placeholder="Briefly describe your complaint" 
-                  [(ngModel)]="formData.description"
-                  name="description"
-                  required></textarea>
+
+          <!-- STEP 2 -->
+          <div *ngIf="currentStep() === 2">
+            <!-- Row 1: Accused's Name and Student ID -->
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="accused-name">Accused's Name <span class="required">*</span></label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="accused-name" 
+                    placeholder="Enter accused's name" 
+                    [(ngModel)]="formStep2.accusedName"
+                    name="accusedName"
+                    required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="accused-student-id">Accused Student ID</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="accused-student-id" 
+                    placeholder="Enter accused's student ID"
+                    [(ngModel)]="formStep2.accusedStudentId"
+                    name="accusedStudentId">
+                </div>
               </div>
             </div>
-          </div>
-          
-          <!-- Row 3: Name and Gender -->
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="name">Name of the Complainant <span class="required">*</span></label>
-                <input 
-                  type="text" 
-                  class="form-control" 
-                  id="name" 
-                  placeholder="Enter your full name"
-                  [(ngModel)]="formData.name"
-                  name="name"
-                  required>
+
+            <!-- Row 2: Department and Contact No -->
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="accused-department">Accused Department</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="accused-department" 
+                    placeholder="Enter accused's department"
+                    [(ngModel)]="formStep2.accusedDepartment"
+                    name="accusedDepartment">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="accused-contact">Accused Contact</label>
+                  <input 
+                    type="tel" 
+                    class="form-control" 
+                    id="accused-contact" 
+                    placeholder="Enter accused's contact number"
+                    [(ngModel)]="formStep2.accusedContact"
+                    name="accusedContact">
+                </div>
               </div>
             </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="gender">Gender <span class="required">*</span></label>
-                <select class="form-control" id="gender" [(ngModel)]="formData.gender" name="gender" required>
-                  <option value="" disabled selected>Select your gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                </select>
+
+            <!-- Row 3: Evidence Link -->
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="evidence">Evidence against the accused (Drive link or description)</label>
+                  <textarea 
+                    class="form-control" 
+                    id="evidence" 
+                    rows="3" 
+                    placeholder="Paste your Google Drive link or describe the evidence"
+                    [(ngModel)]="formStep2.evidenceDetails"
+                    name="evidenceDetails"></textarea>
+                </div>
               </div>
             </div>
-          </div>
-          
-          <!-- Row 4: Student ID and Department -->
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="student-id">Student ID <span class="required">*</span></label>
-                <input 
-                  type="text" 
-                  class="form-control" 
-                  id="student-id" 
-                  placeholder="Enter your student ID"
-                  [(ngModel)]="formData.studentId"
-                  name="studentId"
-                  required>
-              </div>
+
+            <div class="form-submit spaced between">
+              <button type="button" class="btn-outline" (click)="currentStep.set(1)" [disabled]="isLoading()">Back</button>
+              <button type="submit" class="btn-next" [disabled]="isLoading()">
+                {{ isLoading() ? 'Submitting...' : 'Submit' }}
+              </button>
             </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="department">Department <span class="required">*</span></label>
-                <input 
-                  type="text" 
-                  class="form-control" 
-                  id="department" 
-                  placeholder="Enter your department"
-                  [(ngModel)]="formData.department"
-                  name="department"
-                  required>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Row 5: Contact No and Advisor's Name -->
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="contact">Contact No. <span class="required">*</span></label>
-                <input 
-                  type="tel" 
-                  class="form-control" 
-                  id="contact" 
-                  placeholder="Enter your contact number"
-                  [(ngModel)]="formData.contact"
-                  name="contact"
-                  required>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="advisor">Advisor's Name <span class="required">*</span></label>
-                <input 
-                  type="text" 
-                  class="form-control" 
-                  id="advisor" 
-                  placeholder="Enter your advisor's name"
-                  [(ngModel)]="formData.advisor"
-                  name="advisor"
-                  required>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Row 6: Location and Incident Date -->
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="location">Location</label>
-                <input 
-                  type="text" 
-                  class="form-control" 
-                  id="location" 
-                  placeholder="Enter incident location"
-                  [(ngModel)]="formData.location"
-                  name="location">
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="incidentDate">Incident Date</label>
-                <input 
-                  type="date" 
-                  class="form-control" 
-                  id="incidentDate" 
-                  [(ngModel)]="formData.incidentDate"
-                  name="incidentDate">
-              </div>
-            </div>
-          </div>
-          
-          <!-- Submit Button -->
-          <div class="form-submit">
-            <button type="submit" class="btn-next" [disabled]="!complaintForm.valid || isLoading()">
-              {{ isLoading() ? 'Submitting...' : 'Next' }}
-            </button>
           </div>
         </form>
       </div>
@@ -179,17 +276,25 @@ import { UserService } from '../services/user.service';
 export class FileComplaintPage implements OnInit {
   isLoading = signal(false);
   categories = signal<ComplaintCategory[]>([]);
-  formData = {
+  currentStep = signal<1 | 2>(1);
+  formStep1 = {
     categoryId: null as number | null,
     description: '',
     name: '',
     gender: '',
-    studentId: '',
+    organizationId: '',
     department: '',
     contact: '',
     advisor: '',
     location: '',
     incidentDate: ''
+  };
+  formStep2 = {
+    accusedName: '',
+    accusedStudentId: '',
+    accusedDepartment: '',
+    accusedContact: '',
+    evidenceDetails: ''
   };
 
   constructor(
@@ -217,12 +322,20 @@ export class FileComplaintPage implements OnInit {
   loadUserData(): void {
     const currentUser = UserService.getCurrentUser();
     if (currentUser) {
-      this.formData.name = currentUser.name || currentUser.fullName;
-      this.formData.studentId = currentUser.userName || '';
-      this.formData.department = currentUser.department || '';
-      this.formData.contact = currentUser.phone || '';
-      this.formData.advisor = currentUser.advisorName || '';
+      this.formStep1.name = currentUser.name || currentUser.fullName;
+      this.formStep1.organizationId = currentUser.organizationId || '';
+      this.formStep1.department = currentUser.department || '';
+      this.formStep1.contact = currentUser.phone || '';
+      this.formStep1.advisor = currentUser.advisorName || '';
     }
+  }
+
+  goToStep2(): void {
+    if (!this.formStep1.categoryId || !this.formStep1.description || !this.formStep1.name || !this.formStep1.gender || !this.formStep1.organizationId || !this.formStep1.department || !this.formStep1.contact || !this.formStep1.advisor) {
+      alert('Please fill in all required fields.');
+      return;
+    }
+    this.currentStep.set(2);
   }
 
   onSubmit(): void {
@@ -234,30 +347,25 @@ export class FileComplaintPage implements OnInit {
       return;
     }
 
-    if (!this.formData.categoryId || !this.formData.description) {
-      alert('Please fill in all required fields');
-      return;
-    }
-
     this.isLoading.set(true);
 
     const complaint: Complaint = {
       id: 0,
-      title: this.getCategoryName(this.formData.categoryId!) || 'Complaint',
-      description: this.formData.description,
+      title: this.getCategoryName(this.formStep1.categoryId!) || 'Complaint',
+      description: this.formStep1.description,
       complaintDate: new Date().toISOString(),
       status: 'Pending',
       priority: Priority.Medium,
       complainantId: currentUser.id,
-      complainantName: this.formData.name,
-      complainantDetails: `${this.formData.gender}, Student ID: ${this.formData.studentId}`,
-      complainantStudentId: this.formData.studentId,
-      accusedStudentId: null,
-      accusedName: null,
-      accusedDetails: null,
-      categoryId: this.formData.categoryId,
-      location: this.formData.location || '',
-      incidentDate: this.formData.incidentDate || null,
+      complainantName: this.formStep1.name,
+      complainantDetails: `${this.formStep1.gender}, Student ID: ${this.formStep1.organizationId}`,
+      complainantStudentId: this.formStep1.organizationId,
+      accusedStudentId: this.parseAccusedId(this.formStep2.accusedStudentId),
+      accusedName: this.formStep2.accusedName || null,
+      accusedDetails: this.buildAccusedDetails(),
+      categoryId: this.formStep1.categoryId,
+      location: this.formStep1.location || '',
+      incidentDate: this.formStep1.incidentDate || null,
       createdOn: '',
       modifiedOn: '',
       complainant: null,
@@ -286,6 +394,26 @@ export class FileComplaintPage implements OnInit {
   getCategoryName(categoryId: number): string {
     const category = this.categories().find(c => c.id === categoryId);
     return category?.name || '';
+  }
+
+  private parseAccusedId(value: string): number | null {
+    if (!value) return null;
+    const parsed = parseInt(value, 10);
+    return isNaN(parsed) ? null : parsed;
+  }
+
+  private buildAccusedDetails(): string | null {
+    const parts: string[] = [];
+    if (this.formStep2.accusedDepartment) {
+      parts.push(`Department: ${this.formStep2.accusedDepartment}`);
+    }
+    if (this.formStep2.accusedContact) {
+      parts.push(`Contact: ${this.formStep2.accusedContact}`);
+    }
+    if (this.formStep2.evidenceDetails) {
+      parts.push(`Evidence: ${this.formStep2.evidenceDetails}`);
+    }
+    return parts.length ? parts.join(' | ') : null;
   }
 }
 

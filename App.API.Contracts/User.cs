@@ -25,8 +25,6 @@ namespace App.API.Contracts
         public int? RoleId { get; set; }
         public string UserType { get; set; }
         public bool IsActive { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public DateTime ModifiedOn { get; set; }
 
         public Role? Role { get; set; }
     }

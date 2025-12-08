@@ -1,16 +1,3 @@
-:root {
-  --primary-blue: #0b509e;
-  --sidebar-bg: #000000;
-  --sidebar-active: #00aaff;
-  --card-blue: #539bf5;
-  --card-purple: #a25bff;
-  --card-yellow: #f7b63f;
-  --card-green: #4bb543;
-  --status-pending: #6c757d;
-  --status-progress: #007bff;
-  --status-done: #28a745;
-}
-
 body {
   font-family: 'Open Sans', sans-serif;
   background-color: #f8f9fa;
@@ -22,7 +9,7 @@ body {
 /* Fixed Top Bar */
 .fixed-top-bar {
   height: 40px;
-  background-color: var(--primary-blue);
+  background-color: #0b509e;
   width: 100%;
   position: fixed;
   top: 0;
@@ -40,7 +27,6 @@ body {
 /* Sidebar */
 .sidebar {
   width: 260px;
-  background-color: var(--sidebar-bg) !important;
   background-color: #000000 !important;
   color: white !important;
   padding: 20px 0;
@@ -99,7 +85,7 @@ body {
     }
 
     &.active {
-      background-color: var(--sidebar-active);
+      background-color: #00aaff;
       color: white !important;
     }
 
@@ -132,7 +118,6 @@ body {
 
 /* Header */
 .dashboard-header {
-  background: linear-gradient(to right, #0078d7, var(--primary-blue)) !important;
   background: linear-gradient(to right, #0078d7, #0b509e) !important;
   color: white !important;
   padding: 20px;
@@ -204,7 +189,7 @@ body {
   align-items: center;
   justify-content: center;
   margin-right: 10px;
-  color: var(--primary-blue);
+  color: #0b509e;
   font-weight: bold;
 }
 
@@ -230,7 +215,7 @@ body {
   top: 50px;
   left: 20px;
   z-index: 1000;
-  background-color: var(--primary-blue);
+  background-color: #0b509e;
   color: white;
   border: none;
   border-radius: 5px;

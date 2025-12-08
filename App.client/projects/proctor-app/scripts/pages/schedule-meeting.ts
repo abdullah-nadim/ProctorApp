@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { MeetingService } from '../services/meeting.service';
 import { ComplaintService } from '../services/complaint.service';
 import { Meeting } from '../models/meeting';
+import { Complaint } from '../models/complaint';
 import { MeetingStatus } from '../models/user';
 import { UserService } from '../services/user.service';
 
@@ -17,7 +18,7 @@ import { UserService } from '../services/user.service';
       <div class="schedule-meeting-container">
         <div class="page-header">
           <h1 class="page-title">Schedule Meeting</h1>
-          <button class="btn btn-primary" (click)="showCreateForm.set(true)" *ngIf="!showCreateForm()">
+          <button class="btn btn-primary" (click)="onCreateMeetingClick()" *ngIf="!showCreateForm()">
             <i class="fas fa-plus"></i> Create Meeting
           </button>
         </div>
@@ -27,14 +28,17 @@ import { UserService } from '../services/user.service';
           <h2>Create New Meeting</h2>
           <form (ngSubmit)="onSubmitMeeting()" #meetingForm="ngForm">
             <div class="form-group">
-              <label>Complaint ID <span class="required">*</span></label>
-              <input 
-                type="number" 
+              <label>Complaint <span class="required">*</span></label>
+              <select 
                 class="form-control" 
                 [(ngModel)]="meetingFormData.complaintId"
                 name="complaintId"
-                placeholder="Enter complaint ID"
                 required>
+                <option [ngValue]="null" disabled>Select a complaint</option>
+                <option *ngFor="let complaint of complaints()" [ngValue]="complaint.id">
+                  {{ complaint.id }} - {{ complaint.complainantName || 'Unknown' }}
+                </option>
+              </select>
             </div>
             
             <div class="row">
@@ -117,8 +121,8 @@ import { UserService } from '../services/user.service';
             </thead>
             <tbody>
               <tr *ngFor="let meeting of meetings()">
-                <td>#M{{ getMeetingId(meeting.id) }}</td>
-                <td>#C{{ getComplaintId(meeting.complaintId) }}</td>
+                <td>{{ meeting.id }}</td>
+                <td>{{ meeting.complaintId }}</td>
                 <td>{{ formatMeetingDate(meeting.scheduledAt) }}</td>
                 <td>{{ formatMeetingTime(meeting.scheduledAt) }}</td>
                 <td>{{ meeting.location }}</td>
@@ -138,6 +142,7 @@ import { UserService } from '../services/user.service';
 })
 export class ScheduleMeetingPage implements OnInit {
   meetings = signal<Meeting[]>([]);
+  complaints = signal<Complaint[]>([]);
   showCreateForm = signal(false);
   isLoading = signal(false);
   
@@ -159,10 +164,30 @@ export class ScheduleMeetingPage implements OnInit {
     this.loadMeetings();
   }
 
+  loadComplaints(): void {
+    this.complaintService.getAllComplaints().subscribe({
+      next: (complaints: Complaint[]) => {
+        this.complaints.set(complaints);
+      },
+      error: (error) => {
+        console.error('Error loading complaints:', error);
+        this.complaints.set([]);
+      }
+    });
+  }
+
   loadMeetings(): void {
     this.isLoading.set(true);
     
-    this.meetingService.getAllMeetings().subscribe({
+    const currentUser = UserService.getCurrentUser();
+    if (!currentUser) {
+      console.error('No current user found');
+      this.meetings.set([]);
+      this.isLoading.set(false);
+      return;
+    }
+    
+    this.meetingService.getMeetingsForUser(currentUser.id).subscribe({
       next: (meetings: Meeting[]) => {
         this.meetings.set(meetings);
         this.isLoading.set(false);
@@ -196,6 +221,7 @@ export class ScheduleMeetingPage implements OnInit {
     meeting.scheduledAt = dateTime.toISOString();
     meeting.location = this.meetingFormData.location;
     meeting.agenda = this.meetingFormData.agenda || null;
+    meeting.notes = this.meetingFormData.notes || null;
     meeting.status = MeetingStatus.Scheduled;
     meeting.durationMinutes = 30; // Default duration
 
@@ -238,12 +264,9 @@ export class ScheduleMeetingPage implements OnInit {
     return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
   }
 
-  getMeetingId(id: number): string {
-    return String(id).padStart(6, '0');
-  }
-
-  getComplaintId(id: number): string {
-    return String(id).padStart(8, '0');
+  onCreateMeetingClick(): void {
+    this.showCreateForm.set(true);
+    this.loadComplaints();
   }
 }
 

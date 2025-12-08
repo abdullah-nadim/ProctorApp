@@ -10,6 +10,7 @@ using App.Repositories.Configurations.Notifications;
 using App.Repositories.Configurations.Roles;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace App.Repositories
 {
@@ -51,6 +52,7 @@ namespace App.Repositories
 
             // Audit Logs
             modelBuilder.ApplyConfiguration(new AuditLogConfiguration(this));
+            ApplyUtcDateTimeConverter(modelBuilder);
         }
 
         public override int SaveChanges()
@@ -92,6 +94,32 @@ namespace App.Repositories
                     case EntityState.Deleted:
                         entry.Entity.ModifiedOn = DateTime.UtcNow;
                         break;
+                }
+            }
+        }
+
+        private static void ApplyUtcDateTimeConverter(ModelBuilder modelBuilder)
+        {
+            var dateTimeConverter = new ValueConverter<DateTime, DateTime>(
+                v => v.Kind == DateTimeKind.Utc ? v : DateTime.SpecifyKind(v, DateTimeKind.Utc),
+                v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+
+            var nullableDateTimeConverter = new ValueConverter<DateTime?, DateTime?>(
+                v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : v,
+                v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : v);
+
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                foreach (var property in entityType.GetProperties())
+                {
+                    if (property.ClrType == typeof(DateTime))
+                    {
+                        property.SetValueConverter(dateTimeConverter);
+                    }
+                    else if (property.ClrType == typeof(DateTime?))
+                    {
+                        property.SetValueConverter(nullableDateTimeConverter);
+                    }
                 }
             }
         }
