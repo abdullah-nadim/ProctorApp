@@ -57,5 +57,13 @@ export class AuthService {
   isAuthenticated(): boolean {
     return UserService.getCurrentUser() !== null;
   }
+
+  forgotPassword(email: string): Observable<{ success: boolean; message: string }> {
+    return this.api.forgotPassword(email);
+  }
+
+  resetPassword(email: string, token: string, newPassword: string): Observable<{ success: boolean; message: string }> {
+    return this.api.resetPassword(email, token, newPassword);
+  }
 }
 

@@ -20,6 +20,7 @@ import { ScheduleMeetingPage } from '@pages/schedule-meeting';
 import { ManageCasesPage } from '@pages/manage-cases';
 import { CaseDetailsPage } from '@pages/case-details';
 import { MeetingDetailsPage } from '@pages/meeting-details';
+import { ForgotPasswordPage } from '@pages/forgot-password';
 
 export const RouteConfiguration: Routes = [
   {
@@ -29,6 +30,7 @@ export const RouteConfiguration: Routes = [
       { path: '', redirectTo: '/home', pathMatch: 'full' },
       { path: 'home', component: HomePage },
       { path: 'login', component: LoginPage },
+      { path: 'forgot-password', component: ForgotPasswordPage },
       { path: 'about-us', component: AboutUsPage },
       { path: 'contact', component: ContactPage },
       { path: 'employee-list', component: EmployeeListPage }

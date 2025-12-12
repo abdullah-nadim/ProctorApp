@@ -82,6 +82,51 @@ namespace App.Services
             await _signInManager.SignOutAsync();
         }
 
+        public async Task<(bool success, string? token, string[] errors)> ForgotPasswordAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                // Don't reveal if user exists or not for security
+                return (true, null, Array.Empty<string>());
+            }
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            // Token is URL-safe base64 encoded
+            var encodedToken = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
+            
+            return (true, encodedToken, Array.Empty<string>());
+        }
+
+        public async Task<(bool success, string[] errors)> ResetPasswordAsync(string email, string token, string newPassword)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return (false, new[] { "Invalid email or token." });
+            }
+
+            // Decode the token
+            string decodedToken;
+            try
+            {
+                decodedToken = Encoding.UTF8.GetString(Convert.FromBase64String(token));
+            }
+            catch
+            {
+                return (false, new[] { "Invalid token format." });
+            }
+
+            var result = await _userManager.ResetPasswordAsync(user, decodedToken, newPassword);
+            
+            if (result.Succeeded)
+            {
+                return (true, Array.Empty<string>());
+            }
+
+            return (false, result.Errors.Select(e => e.Description).ToArray());
+        }
+
         private async Task<string> GenerateJwtToken(User user)
         {
             var claims = new List<Claim>

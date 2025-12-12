@@ -153,6 +153,49 @@ namespace App.API
             return Ok(C.User.ToContract(user, _Mapper));
         }
 
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Email))
+            {
+                return BadRequest(new { success = false, message = "Email is required." });
+            }
+
+            (bool success, string? token, string[] errors) = await _AuthService.ForgotPasswordAsync(request.Email);
+
+            if (success)
+            {
+                // In a real application, you would send an email with the reset link here
+                // For now, we'll return success (don't reveal if user exists)
+                return Ok(new { success = true, message = "If an account exists with this email, a password reset link has been sent." });
+            }
+
+            return BadRequest(new { success = false, message = errors.FirstOrDefault() ?? "Failed to process request." });
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Token) || string.IsNullOrWhiteSpace(request.NewPassword))
+            {
+                return BadRequest(new { success = false, message = "Email, token, and new password are required." });
+            }
+
+            if (request.NewPassword.Length < 6)
+            {
+                return BadRequest(new { success = false, message = "Password must be at least 6 characters long." });
+            }
+
+            (bool success, string[] errors) = await _AuthService.ResetPasswordAsync(request.Email, request.Token, request.NewPassword);
+
+            if (success)
+            {
+                return Ok(new { success = true, message = "Password has been reset successfully." });
+            }
+
+            return BadRequest(new { success = false, message = errors.FirstOrDefault() ?? "Failed to reset password." });
+        }
+
         private readonly IAuthService _AuthService;
         private readonly UserServices _UserServices;
         private readonly IMapper _Mapper;

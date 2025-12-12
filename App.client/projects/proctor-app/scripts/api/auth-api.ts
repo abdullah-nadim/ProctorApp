@@ -50,5 +50,13 @@ export class AuthAPI {
   getCurrentUser(): Observable<User> {
     return this.http.get<User>(`${this.baseUrl}/me`, { withCredentials: true });
   }
+
+  forgotPassword(email: string): Observable<{ success: boolean; message: string }> {
+    return this.http.post<{ success: boolean; message: string }>(`${this.baseUrl}/forgot-password`, { email }, { withCredentials: true });
+  }
+
+  resetPassword(email: string, token: string, newPassword: string): Observable<{ success: boolean; message: string }> {
+    return this.http.post<{ success: boolean; message: string }>(`${this.baseUrl}/reset-password`, { email, token, newPassword }, { withCredentials: true });
+  }
 }
 
