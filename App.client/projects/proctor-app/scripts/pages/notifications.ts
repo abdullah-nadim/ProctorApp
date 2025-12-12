@@ -22,7 +22,11 @@ import { UserService } from '../services/user.service';
           </button>
         </div>
         
-        <div class="notifications-list">
+        <div class="loading-indicator" *ngIf="isLoading()">
+          <p>Loading notifications...</p>
+        </div>
+        
+        <div class="notifications-list" *ngIf="!isLoading()">
           <div 
             class="notification-card" 
             *ngFor="let notification of notifications()" 
@@ -41,7 +45,7 @@ import { UserService } from '../services/user.service';
               </div>
             </div>
           </div>
-          <div class="no-notifications" *ngIf="notifications().length === 0">
+          <div class="no-notifications" *ngIf="notifications().length === 0 && !isLoading()">
             <p>No notifications yet</p>
           </div>
         </div>
@@ -70,10 +74,26 @@ export class NotificationsPage implements OnInit, OnDestroy {
         const latest = signalRNotifications[0];
         // Merge with existing notifications, avoiding duplicates
         this.notifications.update(current => {
-          const exists = current.some(n => n.id === latest.id);
+          const exists = current.some(n => 
+            n.id === latest.id || 
+            (n.id && latest.id && n.id === latest.id) ||
+            (n.userId === latest.userId && 
+             n.title === latest.title && 
+             n.message === latest.message &&
+             Math.abs(new Date(n.createdAt).getTime() - new Date(latest.createdAt).getTime()) < 5000)
+          );
           if (exists) return current;
-          return [latest, ...current];
+          console.log('Adding new notification to list:', latest);
+          const updated = [latest, ...current];
+          // Sort by created date, newest first
+          updated.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+          return updated;
         });
+        
+        // Also reload from API to ensure we have the latest state
+        setTimeout(() => {
+          this.loadNotifications();
+        }, 1000);
       }
     });
   }
@@ -87,12 +107,15 @@ export class NotificationsPage implements OnInit, OnDestroy {
     const currentUser = UserService.getCurrentUser();
     
     if (!currentUser) {
+      console.warn('No current user found, cannot load notifications');
       this.isLoading.set(false);
       return;
     }
 
+    console.log('Loading notifications for user:', currentUser.id);
     this.notificationService.getNotificationsByUser(currentUser.id).subscribe({
       next: (notifications: Notification[]) => {
+        console.log('Loaded notifications from API:', notifications.length);
         // Sort by created date, newest first
         notifications.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         this.notifications.set(notifications);

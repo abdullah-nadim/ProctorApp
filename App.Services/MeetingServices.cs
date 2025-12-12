@@ -36,21 +36,22 @@ namespace App.Services
                         var notification = new Notification(participant.UserId, "Meeting Scheduled", $"A meeting has been scheduled for case: {complaintTitle}");
                         notification.SetRelatedEntity(RelatedEntityType.Meeting, meeting.Id, $"/dashboard/meeting-details/{meeting.Id}");
                         await factory.GetNotificationRepository().CreateAsync(notification);
+                        factory.Commit();
                         
                         var notificationContract = new App.API.Contracts.Notifications.Notification
                         {
+                            Id = notification.Id,
                             UserId = participant.UserId,
                             Title = "Meeting Scheduled",
                             Message = $"A meeting has been scheduled for case: {complaintTitle}",
                             RelatedEntityType = RelatedEntityType.Meeting.ToString(),
                             RelatedEntityId = meeting.Id,
                             ActionUrl = $"/dashboard/meeting-details/{meeting.Id}",
-                            CreatedAt = DateTime.UtcNow,
+                            CreatedAt = notification.CreatedAt,
                             IsRead = false
                         };
                         await _hubContext.Clients.Group($"user_{participant.UserId}").SendAsync("ReceiveNotification", notificationContract);
                     }
-                    factory.Commit();
                 }
                 
                 return meeting.Id;
@@ -107,21 +108,22 @@ namespace App.Services
                             var notification = new Notification(participant.UserId, "Meeting Completed", $"The meeting for case '{complaintTitle}' has been completed.");
                             notification.SetRelatedEntity(RelatedEntityType.Meeting, meeting.Id, $"/dashboard/meeting-details/{meeting.Id}");
                             await factory.GetNotificationRepository().CreateAsync(notification);
+                            factory.Commit();
                             
                             var notificationContract = new App.API.Contracts.Notifications.Notification
                             {
+                                Id = notification.Id,
                                 UserId = participant.UserId,
                                 Title = "Meeting Completed",
                                 Message = $"The meeting for case '{complaintTitle}' has been completed.",
                                 RelatedEntityType = RelatedEntityType.Meeting.ToString(),
                                 RelatedEntityId = meeting.Id,
                                 ActionUrl = $"/dashboard/meeting-details/{meeting.Id}",
-                                CreatedAt = DateTime.UtcNow,
+                                CreatedAt = notification.CreatedAt,
                                 IsRead = false
                             };
                             await _hubContext.Clients.Group($"user_{participant.UserId}").SendAsync("ReceiveNotification", notificationContract);
                         }
-                        factory.Commit();
                     }
                 }
             }

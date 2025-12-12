@@ -9,8 +9,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.SignalR;
 
 namespace App.Site
 {

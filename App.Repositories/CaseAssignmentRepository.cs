@@ -9,7 +9,7 @@ namespace App.Repositories
 
         public async Task<List<CaseAssignment>> ReadManyByAssignee(int assigneeId, CancellationToken cancellationToken = default)
         {
-            return await ReadManyAsync(ca => ca.AssignedTo == assigneeId, cancellationToken);
+            return await ReadManyAsync(ca => ca.AssignedBy == assigneeId, cancellationToken);
         }
 
         public async Task<List<CaseAssignment>> ReadManyByComplaint(int complaintId, CancellationToken cancellationToken = default)

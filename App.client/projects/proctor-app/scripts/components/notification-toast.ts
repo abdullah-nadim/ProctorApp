@@ -149,8 +149,15 @@ export class NotificationToastComponent implements OnInit, OnDestroy {
       if (notifications && notifications.length > 0) {
         const latest = notifications[0]; // Get the latest notification
         // Check if we already showed this notification
-        const alreadyShown = this.visibleNotifications().some(n => n.id === latest.id);
-        if (!alreadyShown) {
+        const alreadyShown = this.visibleNotifications().some(n => 
+          n.id === latest.id || 
+          (n.userId === latest.userId && 
+           n.title === latest.title && 
+           n.message === latest.message &&
+           Math.abs(new Date(n.createdAt).getTime() - new Date(latest.createdAt).getTime()) < 2000)
+        );
+        if (!alreadyShown && latest.id) {
+          console.log('Showing notification toast:', latest);
           this.showNotification(latest);
         }
       }
@@ -164,8 +171,12 @@ export class NotificationToastComponent implements OnInit, OnDestroy {
   }
 
   showNotification(notification: Notification): void {
+    // Generate a temporary ID if notification doesn't have one
+    const notificationId = notification.id || Date.now();
+    
     const toastNotification: ToastNotification = {
       ...notification,
+      id: notificationId,
       show: true
     };
 
@@ -176,7 +187,7 @@ export class NotificationToastComponent implements OnInit, OnDestroy {
       this.dismissNotification(toastNotification);
     }, 5000);
 
-    this.notificationTimeouts.set(notification.id, timeout);
+    this.notificationTimeouts.set(notificationId, timeout);
   }
 
   dismissNotification(notification: ToastNotification): void {

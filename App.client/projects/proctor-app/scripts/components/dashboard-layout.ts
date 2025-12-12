@@ -37,7 +37,10 @@ interface MenuItem {
         
         <ul class="sidebar-menu">
           <li *ngFor="let menuItem of visibleMenuItems()">
-            <a [routerLink]="menuItem.route" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">
+            <a 
+              [routerLink]="menuItem.route" 
+              routerLinkActive="active" 
+              [routerLinkActiveOptions]="menuItem.route === '/dashboard' ? {exact: true} : {exact: false}">
               <i [class]="menuItem.icon"></i> 
               <span>{{ menuItem.label }}</span>
             </a>
@@ -132,11 +135,17 @@ export class DashboardLayout implements OnInit, OnDestroy {
     const user = UserService.getCurrentUser();
     if (user) {
       this.currentUser.set(user);
+      // Start SignalR connection immediately if user is available
+      await this.signalRService.requestNotificationPermission();
+      await this.signalRService.startConnection();
     } else {
       // Try to fetch user from API
       this.authService.getCurrentUser().subscribe({
-        next: (user) => {
+        next: async (user) => {
           this.currentUser.set(user);
+          // Start SignalR connection after user is loaded
+          await this.signalRService.requestNotificationPermission();
+          await this.signalRService.startConnection();
         },
         error: (error) => {
           console.error('Error loading current user:', error);
@@ -145,10 +154,6 @@ export class DashboardLayout implements OnInit, OnDestroy {
         }
       });
     }
-
-    // Start SignalR connection for real-time notifications
-    await this.signalRService.requestNotificationPermission();
-    await this.signalRService.startConnection();
   }
 
   ngOnDestroy(): void {

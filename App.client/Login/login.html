@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | DIU</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts - Open Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <!-- Fixed Top Bar -->
+    <div class="fixed-top-bar"></div>
+    
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navigation-bar">
+        <div class="container-fluid">
+            <!-- Logo on the left -->
+            <a class="navbar-brand" href="index.html">
+                <img src="images/DIU Logo.png" alt="DIU Logo" class="logo">
+            </a>
+            
+            <!-- Navigation buttons on the right -->
+            <div class="navbar-nav ms-auto">
+                <a href="home.html" class="nav-link home-btn">Home</a>
+                <a href="contact.html" class="nav-link contact-btn">Contact</a>
+                <a href="aboutus.html" class="nav-link about-btn">About Us</a>
+                <a href="login.html" class="nav-link login-btn active">Login</a>
+                <a href="signup.html" class="nav-link signup-btn">Sign Up</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Container -->
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Left Panel - Login Section -->
+            <div class="login-panel">
+                <div class="login-content">
+                    <h1 class="login-title">Log in</h1>
+                    
+                    <form class="login-form">
+                        <!-- Email Input -->
+                        <div class="input-group">
+                            <input type="email" class="form-control" placeholder="Type your e-mail address" required>
+                        </div>
+                        
+                        <!-- Password Input -->
+                        <div class="input-group password-group">
+                            <input type="password" class="form-control" id="password" placeholder="Password" required>
+                            <span class="password-toggle" id="passwordToggle">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                        </div>
+                        
+                        <!-- Remember Me & Forgot Password -->
+                        <div class="form-options">
+                            <div class="remember-me">
+                                <input type="checkbox" id="remember">
+                                <label for="remember">Remember Me</label>
+                            </div>
+                            <a href="#" class="forgot-password">Forgot Password?</a>
+                        </div>
+                        
+                        <!-- Login Button -->
+                        <button type="submit" class="login-button">Log in</button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Right Panel - Welcome Section -->
+            <div class="welcome-panel">
+                <div class="welcome-content">
+                    <h2 class="welcome-title">Welcome Back!</h2>
+                    <p class="welcome-text">To keep connected with us please login with your personal info.</p>
+                    <a href="signup.html" class="signup-button">Sign up</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Password visibility toggle
+        document.getElementById('passwordToggle').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+
+        // Form submission
+        document.querySelector('.login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Add your login logic here
+            alert('Login functionality would be implemented here!');
+        });
+    </script>
+</body>
+</html>

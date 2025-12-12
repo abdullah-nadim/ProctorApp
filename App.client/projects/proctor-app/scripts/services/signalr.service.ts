@@ -34,9 +34,11 @@ export class SignalRService {
 
       // Join user group
       await this.hubConnection.invoke('JoinUserGroup', currentUser.id);
+      console.log(`Joined SignalR group: user_${currentUser.id}`);
 
       // Listen for notifications
       this.hubConnection.on('ReceiveNotification', (notification: Notification) => {
+        console.log('SignalR notification received:', notification);
         this.handleNotification(notification);
       });
 
@@ -78,9 +80,22 @@ export class SignalRService {
   }
 
   private handleNotification(notification: Notification): void {
+    console.log('Received notification via SignalR:', notification);
+    
+    // Generate a temporary ID if notification doesn't have one (for deduplication)
+    if (!notification.id || notification.id === 0) {
+      notification.id = Date.now();
+    }
+    
     // Add notification to the list (avoid duplicates)
     this.notifications.update(notifications => {
-      const exists = notifications.some(n => n.id === notification.id);
+      const exists = notifications.some(n => 
+        n.id === notification.id || 
+        (n.userId === notification.userId && 
+         n.title === notification.title && 
+         n.message === notification.message &&
+         Math.abs(new Date(n.createdAt).getTime() - new Date(notification.createdAt).getTime()) < 1000)
+      );
       if (exists) return notifications;
       return [notification, ...notifications];
     });

@@ -32,17 +32,19 @@ namespace App.Services
                     var notification = new Notification(assignment.AssignedTo, "Case Assigned", $"A new case has been assigned to you: {complaint.Title}");
                     notification.SetRelatedEntity(RelatedEntityType.Complaint, assignment.ComplaintId, $"/dashboard/case-details/{assignment.ComplaintId}");
                     await factory.GetNotificationRepository().CreateAsync(notification);
+                    factory.Commit();
                     
-                    // Send via SignalR
+                    // Send via SignalR - create contract with ID
                     var notificationContract = new App.API.Contracts.Notifications.Notification
                     {
+                        Id = notification.Id,
                         UserId = assignment.AssignedTo,
                         Title = "Case Assigned",
                         Message = $"A new case has been assigned to you: {complaint.Title}",
                         RelatedEntityType = RelatedEntityType.Complaint.ToString(),
                         RelatedEntityId = assignment.ComplaintId,
                         ActionUrl = $"/dashboard/case-details/{assignment.ComplaintId}",
-                        CreatedAt = DateTime.UtcNow,
+                        CreatedAt = notification.CreatedAt,
                         IsRead = false
                     };
                     await _hubContext.Clients.Group($"user_{assignment.AssignedTo}").SendAsync("ReceiveNotification", notificationContract);
